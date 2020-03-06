@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity,AsyncSt
 import Constants from "expo-constants";
 import { Container, Header, Title, Button, Icon, Content, InputGroup, Input } from 'native-base';
 // import ActionButton from 'react-native-action-button';
+import Dialog from "react-native-dialog";
 import DatePicker from 'react-native-datepicker'
 import * as firebase from 'firebase';
 import '@firebase/firestore';
@@ -11,7 +12,6 @@ import database from './Database3';
 // Edit_Note
 // Edit_PomodoroNumber
 // Edit_Reminder
-
 // Edit_Repeat
 
 export default class AddTask extends Component {
@@ -20,8 +20,7 @@ export default class AddTask extends Component {
 
   constructor(props) {
     super(props);
-    this.dataRepeat = ["None","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","Everyday"]
-    this.dataPodo = ["None","1","2","3","4","5"]
+    this.dataRepeat = ["None","Everyday"]
     this.state = {
       chosenDate: new Date(), 
       chosenDate2: new Date(), 
@@ -31,7 +30,11 @@ export default class AddTask extends Component {
       time:'',
       Date:'',
       Priority:'',
-      datex:''
+      datex:'',
+      picker:false,
+      parker:false,
+      repeat:false,
+
       
     };
 
@@ -45,11 +48,11 @@ export default class AddTask extends Component {
     this.setState({email:await AsyncStorage.getItem('@email')})
    
     var myJSON = await JSON.stringify(this.state.chosenDate);
-   
      myJSON= await myJSON.slice(1,11)
     
 
    await this.setState({date: myJSON});
+
     
     console.log(this.state.date)
   
@@ -97,6 +100,9 @@ export default class AddTask extends Component {
     this.props.navigation.navigate("Main1");
     
  }
+ onPressAddColor(){
+  this.props.navigation.navigate("AddColor");
+}
  onPressAdd = async() => {
   await this.addText();
   
@@ -123,7 +129,6 @@ addText=async()=>{
     await database.updateID(id,this.state.email,this.updateSuccess,this.updateFail)
    
     // await database.readMessage(this.state.email,this.state.Date,this.readMessageSuccess,this.readMessageFail)
-  
     
   }
   addMessageFail=async()=>{
@@ -144,10 +149,6 @@ addText=async()=>{
 
 
 
-getPodo = () =>{
-  return( this.dataPodo.map( (x,i) => { 
-        return( <PickerIOS.Item label={x} key={i} value={x} />)} ));
-}
 getRepeat = () =>{
   return( this.dataRepeat.map( (x,i) => { 
         return( <PickerIOS.Item label={x} key={i} value={x} />)} ));
@@ -167,65 +168,61 @@ getRepeat = () =>{
               <View style = { styles.MainContainer2 }>
                 <Title>AddTask</Title>
               </View>
-              
-              <TouchableOpacity style={{flex: 1, alignItems: 'center',justifyContent: 'center', left: 10}} onPress={this.onPressAdd}>
+            
+              <TouchableOpacity style={{flex: 1, alignItems: 'center',justifyContent: 'center', left: 10}} onPress={this.onPressAdd}>  
                 <Text style={{fontSize:14}}>Done</Text>
               </TouchableOpacity>
             </Header>
             {/* <ActionButton buttonColor="rgba(75,21,184,2)" position="center"></ActionButton> */}
+            {/* left ???????????????????? ?????????????*/}
 
-
-
-
+          
 
 
         <View style={{flex:1,flexDirection:'column',backgroundColor:'#F6F6F6'}} >
 
 
         <View  style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}} >
-                <Image style={{flex:0.15,marginLeft:30, marginRight:10 ,width:25,height:25,marginRight:20}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr9eWe.png'}}/>
+                <Image style={{flex:0.15,marginLeft:30 ,width:25,height:25,marginRight:20}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr9eWe.png'}}/>
                 <TextInput style={{flex:1}}
                   ref={input => { this.textInput = input }} 
                   placeholder="Add a task..."
                   onChangeText={this.onChangeText}
 
                 />
-                  <Image style={{flex:0.1,marginLeft:30, marginRight:10 ,width:15,height:15}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/RrTgsz.png'}}/>
+                <TouchableOpacity  style={{flex:0.1, marginRight:20 ,height:20}}  onPress={()=>this.onPressAddColor()}>
+                <Image style={{height:19}} source={{uri:'https://sv1.picz.in.th/images/2020/03/03/xGZBDS.png'}}/>
+                </TouchableOpacity>
 
           </View>
 
-          <TouchableOpacity  style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}} onPress={() => this.setState({ podo: !this.state.podo })}>
-                <Image style={{marginLeft:25, marginRight:10 ,width:28,height:28}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/RrkimE.png'}}/>
-                  <View style={{flexDirection: 'column'}} >
-                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10,marginEnd:3,alignItems:'center',justifyContent:'center'}}>Pomodoro Number<Text style={{color:'#D4D4D4'}}> {this.state.selectPodo}</Text></Text>
-                  </View>
-                  {/* <Text style={{fontSize:16 , color:'#D4D4D4', marginLeft:130}}>0 / 0</Text> */}
-            </TouchableOpacity>
-            {this.PodoPicker()}
 
-            <TouchableOpacity  style={{flex:0.08,flexDirection:'row',backgroundColor:'#ffffff', alignItems:'center'}} onPress={() => this.setState({ picker: !this.state.picker })}>
-                <Image style={{marginLeft:25, marginRight:10 ,width:30,height:30}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr3Loy.png'}}/>
-                  <View style={{flexDirection: 'column'}} >
-                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10,marginEnd:3,alignItems:'center',justifyContent:'center'}}>Due Date<Text style={{color:'#D4D4D4'}}> {this.state.date}</Text></Text>
+            <TouchableOpacity style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}} onPress={() => this.setState({ picker: !this.state.picker})}>
+                <Image style={{marginLeft:25, marginRight:10 ,width:25,height:25}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr3Loy.png'}}/>
+                  <View style={{flexDirection: 'row'}} >
+                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10}}>Due Date</Text>
+                    <Text style={{fontSize:18,color:'#D4D4D4',marginLeft:60,fontSize:18}}>{this.state.date}</Text>
                   </View>
                   {/* <Text style={{fontSize:16 , color:'#D4D4D4', marginLeft:162}}>Tomorrow</Text> */}
             </TouchableOpacity>
             {this.renderPicker()}
        
 
-            <TouchableOpacity  style={{flex:0.08,flexDirection:'row',backgroundColor:'#ffffff', alignItems:'center'}} onPress={()=>this.setState({ parker: !this.state.parker })}>
+            <TouchableOpacity style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}} onPress={()=>this.setState({ parker: !this.state.parker})}>
                 <Image style={{marginLeft:25, marginRight:10 ,width:25,height:25}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr3eJD.png'}}/>
-                  <View style={{flexDirection: 'column'}} >
-                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10,marginEnd:3,alignItems:'center',justifyContent:'center'}}>Reminder<Text style={{color:'#D4D4D4'}}> {this.state.datex}</Text></Text>
+                <View style={{flexDirection: 'row'}} >
+                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10}}>Reminder</Text>
+                    <Text style={{fontSize:18,color:'#D4D4D4',marginLeft:60,fontSize:18}}>{this.state.datex}</Text>
                   </View>
                   {/* <Text style={{fontSize:16 , color:'#D4D4D4', marginLeft:192}}>None</Text> */}
             </TouchableOpacity>
             {this.RenderParker()}
 
-            <TouchableOpacity  style={{flex:0.08,flexDirection:'row',backgroundColor:'#ffffff', alignItems:'center'}} onPress={()=>this.setState({ repeat: !this.state.repeat })}>
+            <TouchableOpacity   style={{flex:0.08,flexDirection:'row',backgroundColor:'#ffffff', alignItems:'center'}} onPress={()=>this.setState({ repeat: !this.state.repeat})}>
                 <Image style={{marginLeft:25, marginRight:10 ,width:25,height:25}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr3F5J.png'}}/>
-                  <View style={{flexDirection: 'column'}} >
-        <Text style={{fontSize:18,color:'#171D33',marginLeft:10,marginEnd:3,alignItems:'center',justifyContent:'center'}}>Repeat<Text style={{color:'#D4D4D4'}}> {this.state.selectRepeat}</Text></Text>
+                <View style={{flexDirection: 'row'}} >
+                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10}}>Repeat</Text>
+                    <Text style={{fontSize:18,color:'#D4D4D4',marginLeft:90,fontSize:18}}>{this.state.selectRepeat}</Text>
                   </View>
                   {/* <Text style={{fontSize:16 , color:'#D4D4D4', marginLeft:210}}>None</Text> */}
             </TouchableOpacity>
@@ -251,19 +248,6 @@ getRepeat = () =>{
             </Container>
         );
     }
-    PodoPicker() {
-      if (this.state.podo) {
-        return (
-          <PickerIOS 
-              style={{ flex: 0.5,width: 200,marginLeft:80, marginTop:1 }}
-              selectedValue={ this.state.selectPodo }
-              onValueChange={(itemValue, itemIndex) => this.setState({ selectPodo: itemValue})}>
-              { this.getPodo() }
-            </PickerIOS>
-        );
-      }
-      
-    }
 
     renderPicker() {
       if (this.state.picker) {
@@ -286,6 +270,7 @@ getRepeat = () =>{
           //   }}
           // />
           <DatePickerIOS
+          style={{ flex: 0.5,width: 300,marginLeft:25, marginTop:1 }}
           date={this.state.chosenDate}
           onDateChange={this.setDate}
           mode="date"
@@ -317,9 +302,10 @@ getRepeat = () =>{
           //   }}
           // />
           <DatePickerIOS
+          style={{ flex: 0.5,width: 300,marginLeft:25, marginTop:1 }}
           date={this.state.chosenDate2}
           onDateChange={this.setDate2}
-          mode="date"
+          mode="datetime"
           
         />
         );
@@ -330,7 +316,7 @@ getRepeat = () =>{
       if (this.state.repeat) {
         return (
           <PickerIOS 
-              style={{ flex: 0.5,width: 200,marginLeft:80, marginTop:1 }}
+              style={{ flex: 0.5,width: 200,marginLeft:65, marginTop:1 }}
               selectedValue={ this.state.selectRepeat }
               onValueChange={(itemValue, itemIndex) => this.setState({ selectRepeat: itemValue})}>
               { this.getRepeat() }
@@ -456,7 +442,6 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      right: 10  
     },
       
     MainContainer2:{

@@ -90,15 +90,8 @@ onPressEdit_Repeat(){
                   <Image style={{marginLeft:30, marginRight:10 ,width:15,height:15}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/RrTgsz.png'}}/>
           </TouchableOpacity>
 
-          <TouchableOpacity  style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}}>
-                <Image style={{marginLeft:25, marginRight:10 ,width:28,height:28}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/RrkimE.png'}}/>
-                  <View style={{flexDirection: 'column'}} >
-                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10,marginEnd:3,alignItems:'center',justifyContent:'center'}}>Pomodoro Number</Text>
-                  </View>
-                  <Text style={{fontSize:16 , color:'#D4D4D4', marginLeft:130}}>0 / 0</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity  style={{flex:0.08,flexDirection:'row',backgroundColor:'#ffffff', alignItems:'center'}} onPress={() => this.setState({ picker: !this.state.picker })}>
+            <TouchableOpacity  style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}} onPress={() => this.setState({ picker: !this.state.picker })}>
                 <Image style={{marginLeft:25, marginRight:10 ,width:30,height:30}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr3Loy.png'}}/>
                   <View style={{flexDirection: 'column'}} >
                     <Text style={{fontSize:18,color:'#171D33',marginLeft:10,marginEnd:3,alignItems:'center',justifyContent:'center'}}>Due Date</Text>

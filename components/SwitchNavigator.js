@@ -8,6 +8,7 @@ import Main2 from './main2'
 // import AccountLogin from './AccountLogin'
 import Today from './Today'
 import AddTask from './AddTask'
+import AddColor from './AddColor'
 import Tomorrow from './Tomorrow'
 import Upcoming from './Upcoming'
 import Someday from './Someday'
@@ -189,7 +190,11 @@ const navigator = createSwitchNavigator({
       title: 'AddTask'
     }
   },
-
+  AddColor: {
+    screen: AddColor, navigationOptions: {
+      title: 'AddColor'
+    }
+  },
  
 
 });

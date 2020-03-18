@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity,AsyncStorage, Alert, Image,  DatePickerIOS,PickerIOS} from "react-native";
+import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity,AsyncStorage, Alert, Image,  DatePickerIOS,PickerIOS,ImageBackground} from "react-native";
 import Constants from "expo-constants";
 import { Container, Header, Title, Button, Icon, Content, InputGroup, Input } from 'native-base';
+import { SinglePickerMaterialDialog } from 'react-native-material-dialog';
+import { LinearGradient } from 'expo-linear-gradient';
 // import ActionButton from 'react-native-action-button';
 import Dialog from "react-native-dialog";
 import DatePicker from 'react-native-datepicker'
@@ -20,7 +22,7 @@ export default class AddTask extends Component {
 
   constructor(props) {
     super(props);
-    this.dataRepeat = ["None","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","Everyday"]
+    this.dataRepeat = ["None","Everyday"]
     this.state = {
       chosenDate: new Date(), 
       chosenDate2: new Date(), 
@@ -34,6 +36,9 @@ export default class AddTask extends Component {
       picker:false,
       parker:false,
       repeat:false,
+      imgPri:'https://sv1.picz.in.th/images/2020/03/03/xGZBDS.png',
+      singlePickerVisible: false,
+      singlePickerSelectedItem: [],
 
       
     };
@@ -46,9 +51,26 @@ export default class AddTask extends Component {
 
   onFocusFunction=async()=>{
     this.setState({email:await AsyncStorage.getItem('@email')})
+    if (this.state.singlePickerSelectedItem.label == "HIGH PRIORITY") {
+      this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZtY1.png" })
+    
+    }
+    else if (this.state.singlePickerSelectedItem.label == "MEDIUM PRIORITY") {
+      this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZwiy.png" })
+    
+    }
+    else if (this.state.singlePickerSelectedItem.label == "LOW PRIORITY") {
+      this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZsEe.png" })
+    
+    }
+    else if (this.state.singlePickerSelectedItem.label == "NONE PRIORITY") {
+      this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZBDS.png" })
+    
+    }
+    
    
     var myJSON = await JSON.stringify(this.state.chosenDate);
-   
+    console.log(this.state.chosenDate)
      myJSON= await myJSON.slice(1,11)
     
 
@@ -69,6 +91,8 @@ export default class AddTask extends Component {
  }
   
   onChangeText = message => this.setState({ message });
+
+  
   async setDate(newDate) {
     var myJSON = await JSON.stringify(newDate);
     console.log(typeof(myJSON))
@@ -76,7 +100,7 @@ export default class AddTask extends Component {
      myJSON= await myJSON.slice(1,11)
     console.log(myJSON)
     await this.setState({chosenDate:newDate})
-   await this.setState({date: myJSON});
+    await this.setState({date: myJSON});
     
     console.log(this.state.date)
   }
@@ -97,27 +121,47 @@ export default class AddTask extends Component {
 
 
   onPressBack(){
+    AsyncStorage.removeItem('@Pri');
     this.props.navigation.navigate("Main1");
+   
+    
     
  }
  onPressAddColor(){
   this.props.navigation.navigate("AddColor");
+  console.log("here")
 }
  onPressAdd = async() => {
   await this.addText();
   
-
+  
   this.textInput.clear() 
 };
 
 addText=async()=>{
-    
+    switch (this.state.imgPri){
+      case 'https://sv1.picz.in.th/images/2020/03/03/xGZtY1.png':
+       
+        await this.setState({Priority:'3'})
+        break;
+      case 'https://sv1.picz.in.th/images/2020/03/03/xGZwiy.png' :
+        await this.setState({Priority:'2'})
+        break;
+      case 'https://sv1.picz.in.th/images/2020/03/03/xGZsEe.png':
+        await this.setState({Priority:'1'})
+        break;
+      case 'https://sv1.picz.in.th/images/2020/03/03/xGZBDS.png':
+        await  this.setState({Priority:'0'})
+        break;
+    }
     Message={
       message:this.state.message,
       time: this.state.time,
       Date:this.state.date,
       status:'1',
-      id:''
+      id:'',
+      PriImg:this.state.imgPri,
+      Priority:this.state.Priority
     }
     console.log(this.state.email)
    await  database.addMessageToday(this.state.email,Message,this.addMessageSuccess,this.addMessageFail)
@@ -138,6 +182,9 @@ addText=async()=>{
   async updateSuccess(){
     
     console.log("updateID");
+    await AsyncStorage.removeItem('@Pri');
+    await this.props.navigation.navigate("Main1");
+    
     
   }
   updateFail(){
@@ -180,9 +227,9 @@ getRepeat = () =>{
 
 
         <View style={{flex:1,flexDirection:'column',backgroundColor:'#F6F6F6'}} >
+          <LinearGradient colors={['#F6F6F6', '#F6F6F6','#ffefd5', '#ffdab9','#ffc0cb']} style={{flex:1}}>
 
-
-        <View  style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}} >
+        <View  style={{flex:0.1,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center',height:25}} >
                 <Image style={{flex:0.15,marginLeft:30 ,width:25,height:25,marginRight:20}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr9eWe.png'}}/>
                 <TextInput style={{flex:1}}
                   ref={input => { this.textInput = input }} 
@@ -190,8 +237,8 @@ getRepeat = () =>{
                   onChangeText={this.onChangeText}
 
                 />
-                <TouchableOpacity  style={{flex:0.1, marginRight:20 ,height:20}}  onPress={()=>this.onPressAddColor()}>
-                <Image style={{height:19}} source={{uri:'https://sv1.picz.in.th/images/2020/03/03/xGZBDS.png'}}/>
+                <TouchableOpacity  style={{flex:0.12, marginRight:20 ,height:20}}  onPress={() => this.setState({ singlePickerVisible: true })}>
+                <Image style={{height:25}} source={{uri:this.state.imgPri}}/>
                 </TouchableOpacity>
 
           </View>
@@ -208,29 +255,9 @@ getRepeat = () =>{
             {this.renderPicker()}
        
 
-            <TouchableOpacity style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}} onPress={()=>this.setState({ parker: !this.state.parker})}>
-                <Image style={{marginLeft:25, marginRight:10 ,width:25,height:25}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr3eJD.png'}}/>
-                <View style={{flexDirection: 'row'}} >
-                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10}}>Reminder</Text>
-                    <Text style={{fontSize:18,color:'#D4D4D4',marginLeft:60,fontSize:18}}>{this.state.datex}</Text>
-                  </View>
-                  {/* <Text style={{fontSize:16 , color:'#D4D4D4', marginLeft:192}}>None</Text> */}
-            </TouchableOpacity>
-            {this.RenderParker()}
-
-            <TouchableOpacity   style={{flex:0.08,flexDirection:'row',backgroundColor:'#ffffff', alignItems:'center'}} onPress={()=>this.setState({ repeat: !this.state.repeat})}>
-                <Image style={{marginLeft:25, marginRight:10 ,width:25,height:25}} source={{uri:'https://sv1.picz.in.th/images/2020/01/24/Rr3F5J.png'}}/>
-                <View style={{flexDirection: 'row'}} >
-                    <Text style={{fontSize:18,color:'#171D33',marginLeft:10}}>Repeat</Text>
-                    <Text style={{fontSize:18,color:'#D4D4D4',marginLeft:90,fontSize:18}}>{this.state.selectRepeat}</Text>
-                  </View>
-                  {/* <Text style={{fontSize:16 , color:'#D4D4D4', marginLeft:210}}>None</Text> */}
-            </TouchableOpacity>
-            {this.renderRepeat()}
-
 
             <View  style={{flex:0.08,flexDirection:'row',marginTop:20,backgroundColor:'#ffffff', alignItems:'center'}} >
-                <TextInput style={{flex:1,marginLeft:40}}
+                <TextInput multiline  style={{flex:1,marginLeft:40}}
                   
                   placeholder="Add a note..."
                   onChangeText={this.onChangeText}
@@ -238,16 +265,27 @@ getRepeat = () =>{
                 />
 
           </View>
-
+          </LinearGradient>
         </View>
 
-
-
+        <SinglePickerMaterialDialog
+          title={"Pick one element!"}
+          items={SHORT_LIST.map((row, index) => ({ value: index, label: row }))}
+          visible={this.state.singlePickerVisible}
+          selectedItem={this.state.singlePickerSelectedItem}
+          onCancel={() => this.setState({ singlePickerVisible: false })}
+          onOk={result => {
+            this.setState({ singlePickerVisible: false });
+            this.setState({ singlePickerSelectedItem: result.selectedItem });
+            this.onFocusFunction();
+          }}  
+        />
 
 
             </Container>
         );
     }
+
 
     renderPicker() {
       if (this.state.picker) {
@@ -256,7 +294,7 @@ getRepeat = () =>{
           //   style={{ width: 200,marginLeft:80 }}
           //   ref={picker => {
           //     this.datePicker = picker;
-          //   }}
+          //   }} 
           //   date={this.state.date}
           //   mode="date"
           //   placeholder="Select date"
@@ -273,6 +311,7 @@ getRepeat = () =>{
           style={{ flex: 0.5,width: 300,marginLeft:25, marginTop:1 }}
           date={this.state.chosenDate}
           onDateChange={this.setDate}
+          
           mode="date"
         />
         );
@@ -328,7 +367,7 @@ getRepeat = () =>{
 }
 
 
-
+const SHORT_LIST = ["HIGH PRIORITY", "MEDIUM PRIORITY", "LOW PRIORITY","NONE PRIORITY"];
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",

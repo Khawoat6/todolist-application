@@ -1,244 +1,364 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Image,} from "react-native";
-import Constants from "expo-constants";
-import { Container, Header, Title, Button, Icon, Content, InputGroup, Input } from 'native-base';
-// import ActionButton from 'react-native-action-button';
-import ReactDOM from "react-dom";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { LinearGradient } from 'expo-linear-gradient';
+import { StyleSheet, Text, View, PickerIOS, TouchableOpacity, Alert } from 'react-native';
+import ActionButton from 'react-native-action-button';
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.Hours  = ["00","01","02","03","04","05", "06","07","08","09","10","11","12","13","14","15","16","17","18","19","20",
+                    "21","22","23"];
 
-
-export default class Time extends Component {
-  onPressBack(){
-    this.props.navigation.navigate('Main1')
- }
-    render() {
-        return (
-
-
-          <LinearGradient
-          colors={['#030B0D', '#4B15B8']}
-          style={{
-            flex:1,
-            // position: 'absolute',
-            // left: 0,
-            // right: 0,
-            // top: 0,
-            // height: 500,
-          }}
-        >
-          
-          <Header >
-              <View style = { styles.MainContainer1}>
-                <Button transparent onPress={()=>this.onPressBack()}>
-                    <Icon name='close' style={{color:'#DBDBDB'}} />
-                </Button>
-              </View>
-              <View style = { styles.MainContainer2 }>
-                <Title>Timer</Title>
-              </View>
-              <View style={{flex: 1, alignItems: 'center',justifyContent: 'center', left: 15}}>
-                {/* <Image style={{width: 20, height: 20}}
-                source={{uri: 'https://sv1.picz.in.th/images/2020/01/22/RCoeNt.png' }}
-              /> */}
-               
-              </View>
-            </Header>
-
-            <View style={{flex: 15,alignItems: 'center',justifyContent: 'center' }}>
-           
-            <TouchableOpacity style={{width:350,height:350,borderWidth:3,borderRadius:800,borderColor:"#FFFFFF",backgroundColor:"#transparent"}}>
-            <View style={{flex: 15,alignItems: 'center',justifyContent: 'center' }}>
-              <Text style={{fontSize:50,color:"#FFFFFF"}}>25:00</Text>
-              </View>
-
-            </TouchableOpacity>
-            <View style={{alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
-            <TouchableOpacity style={styles.btn_login}>
-
-              <Text style={{fontSize:15,color:"#FFFFFF"}} >START</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btn_login}>
-
-              <Text style={{fontSize:15,color:"#FFFFFF"}}>STOP</Text>
-            </TouchableOpacity>
-            </View>
-              
-              </View>
-              
-
-            </LinearGradient>
-        );
+    this.Minute  = ["00","01","02","03","04","05", "06","07","08","09","10","11","12","13","14","15","16","17","18","19","20",
+                    "21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40",
+                    "41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59"];
+    this.state = {
+      timer: null,
+      hours_Counter: '00',
+      minutes_Counter: '00',
+      seconds_Counter: '00',
+      colorButton: '#0A2A12',
+      startDisable: false,
+      nameButton: 'start'
     }
+  }
+  onPressBack(){
+    this.props.navigation.navigate('Tomorrow')
+ }
+  componentWillUnmount() {
+    clearInterval(this.state.timer);
+  }
+
+  showDialog = () => {
+    this.setState({ dialogVisible: true });
+  };
+
+  handleCancel = () => {
+    this.setState({ dialogVisible: false });
+  };
+
+  onButtonStart = () => {
+    if ((this.state.nameButton) == 'stop') {
+      clearInterval(this.state.timer);
+    }
+    if ((this.state.nameButton) == 'start') {
+      if (Number(this.state.hours_Counter) == 0 && Number(this.state.minutes_Counter) == 0 && Number(this.state.seconds_Counter) == 0){
+        this.setState({
+          timer: null,
+          hours_Counter: '00',
+          minutes_Counter: '00',
+          seconds_Counter: '00',
+        });
+        clearInterval(this.state.timer);
+        Alert.alert('Please set time');
+      }else{
+        this.setState({nameButton : 'stop'})
+        let timer = setInterval(() => {
+
+          var num = (Number(this.state.seconds_Counter) - 1).toString(),
+              count = this.state.minutes_Counter,
+              hour = this.state.hours_Counter;
+
+          if (Number(this.state.minutes_Counter) == 0 &&  (Number(this.state.seconds_Counter) == 0)){
+            hour = (Number(this.state.hours_Counter) - 1).toString();
+            this.setState({ minutes_Counter: '60' });
+          }
+
+          if (Number(this.state.seconds_Counter) == 0) {
+            count = (Number(this.state.minutes_Counter) - 1).toString();
+            num = '59';
+          }
+
+          if (Number(this.state.hours_Counter) == 0 && Number(this.state.minutes_Counter) == 0 && Number(this.state.seconds_Counter) == 1){
+            clearInterval(this.state.timer);
+            Alert.alert('Time out');
+            this.setState({nameButton : 'start'})
+          }
+
+          this.setState({
+            hours_Counter: hour.length == 1 ? '0' + hour : hour,
+            minutes_Counter: count.length == 1 ? '0' + count : count,
+            seconds_Counter: num.length == 1 ? '0' + num : num
+          });
+        }, 1000);
+
+        this.setState({ timer });
+
+      }
+    }
+    else {
+      this.setState({nameButton : 'start'})
+    }
+
+  }
+
+  onButtonClear = () => {
+    clearInterval(this.state.timer);
+    this.setState({nameButton : 'start'})
+    this.setState({
+      timer: null,
+      hours_Counter: '00',
+      minutes_Counter: '00',
+      seconds_Counter: '00',
+    });
+  }
+
+
+  getDataHours = () =>{
+    return( this.Hours.map( (x,i) => {
+          return( <PickerIOS.Item label={x} key={i} value={x} color="white" />)} ));
+  }
+  getDataMinute = () =>{
+    return( this.Minute.map( (x,i) => {
+          return( <PickerIOS.Item label={x} key={i} value={x} color="white" />)} ));
+  }
+  render(){
+    //let PickerIOSItem = PickerIOS.Item
+    return (
+
+      <View style={styles.container}>
+        <Text style={{color: '#FFFFFF', fontSize: 30, fontWeight: '800'}}> Coundown Timer </Text>
+        <Text style={styles.counterText}>{this.state.hours_Counter} : {this.state.minutes_Counter} : {this.state.seconds_Counter}</Text>
+        { this.state.nameButton === 'stop' ? null
+ 
+        :
+        <View style={{ display: 'flex', flexDirection: "row", marginLeft:50, marginRight:50}}>
+
+          <View style={{ flex: 1, flexDirection: 'row',alignItems: 'center', marginBottom: 20}}>
+            <PickerIOS
+              style={{ flex: 1 }} selectedValue={ this.state.hours_Counter }
+              onValueChange={(itemValue, itemIndex) => this.setState({ hours_Counter: itemValue})}>
+              { this.getDataHours() }
+            </PickerIOS>
+            <Text style={{color: '#b5b5b5'}}>hour</Text>
+          </View>
+
+          <View style={{ flex: 1, flexDirection: 'row',alignItems: 'center', color: '#FFFFFF', marginBottom: 20 }}>
+          <PickerIOS
+              style={{ flex: 1 }} selectedValue={ this.state.minutes_Counter }
+              onValueChange={(itemValue, itemIndex) => this.setState({ minutes_Counter: itemValue})}>
+              { this.getDataMinute() }
+            </PickerIOS>
+            <Text style={{color: '#b5b5b5'}}>min</Text>
+          </View>
+
+          <View style={{ flex: 1, flexDirection: 'row',alignItems: 'center', color: '#FFFFFF', marginBottom: 20 }}>
+          <PickerIOS
+              style={{ flex: 1 }} selectedValue={ this.state.seconds_Counter }
+              onValueChange={(itemValue, itemIndex) => this.setState({ seconds_Counter: itemValue})}>
+              { this.getDataMinute() }
+            </PickerIOS>
+            <Text style={{color: '#b5b5b5'}}>sec</Text>
+          </View>
+
+        </View>
+        }
+
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+
+          <View style={{alignItems: 'flex-start', marginLeft: 80}}>
+          { this.state.nameButton === 'stop' ?
+            <TouchableOpacity style={styles.circle7} disabled={true}>
+              <TouchableOpacity style={styles.circle8} disabled={true}>
+                <TouchableOpacity style={styles.circle9}
+                  onPress={this.onButtonStart}
+                  activeOpacity={0.6}
+                  disabled={this.state.startDisable}>
+                  <Text style={styles.LabelRed}>{this.state.nameButton}</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </TouchableOpacity>
+
+          :
+            <TouchableOpacity style={styles.circle1} disabled={true}>
+              <TouchableOpacity style={styles.circle2} disabled={true}>
+                <TouchableOpacity style={styles.circle3}
+                  onPress={this.onButtonStart}
+                  activeOpacity={0.6}
+                  disabled={this.state.startDisable}>
+                  <Text style={styles.LabelGreen}>{this.state.nameButton}</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          }
+          { this.state.nameButton === 'start' ?
+          <Text style={{fontSize:15,color:'#FFFFFF',alignItems: 'flex-end', textAlign:'center',left:80}} onPress={() => this.onPressBack()}> Back  </Text>
+          : null }
+          </View>
+
+          <View style={{alignItems: 'flex-end', marginRight: 80}}>
+            <TouchableOpacity style={styles.circle4} disabled={true}>
+              <TouchableOpacity style={styles.circle5} disabled={true}>
+                <TouchableOpacity style={styles.circle6}
+                  onPress={this.onButtonClear}
+                  activeOpacity={0.6}
+                  disabled={this.state.startDisable}>
+                  <Text style={{ color:'#8B8A8F', textAlign:'center', fontSize: 17 }}> cancel </Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
+
+        </View>
+      </View> // Contrainer
+
+    );
+  }
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     flex: 1,
-    paddingTop: Constants.statusBarHeight
+    backgroundColor: "#000000",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center"
-  },
-  flexRow: {
-    flexDirection: "row"
-  },
-  input: {
-    borderColor: "#4630eb",
-    borderRadius: 4,
-    borderWidth: 1,
+  MainContainer: {
     flex: 1,
-    height: 48,
-    margin: 16,
-    padding: 8
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
   },
-  listArea: {
-    backgroundColor: "transparent",
-    flex: 1,
-    // paddingTop: 16
+  buttonStart: {
+    width: '80%',
+    paddingTop:8,
+    paddingBottom:10,
+    borderRadius:10,
+    marginTop: 15,
+
+    display: 'flex',
+    backgroundColor: '#2AC062',
+    //shadowColor: '#2AC062',
+    //shadowOpacity: 0.2,
+    shadowOffset: { height: 10, width: 0 },
+    shadowRadius: 20,
+
   },
-  sectionContainer: {
-    marginBottom: 16,
-    marginHorizontal: 16
+  buttonStop: {
+    width: '80%',
+    paddingTop:8,
+    paddingBottom:8,
+    borderRadius:10,
+    marginTop: 15,
+
+    display: 'flex',
+    backgroundColor: '#2AC062',
+    //shadowColor: '#C1272D',
+    //shadowOpacity: 0.2,
+    shadowOffset: { height: 10, width: 0 },
+    shadowRadius: 20,
+
   },
-  sectionHeading: {
-    fontSize: 18,
-    marginBottom: 8
+  LabelGreen:{
+      color:'#0aad41',
+      textAlign:'center',
+      fontSize: 17
   },
-  nameInput: {
-        alignItems: 'center',
-        height:50,
-        backgroundColor: 'transparent',
-        padding: 5,
-        margin:5,
-        borderRadius: 50,
-        borderColor:'white',
-        borderWidth : 1,
-        fontSize:20,
-    },
-    buttonText: {
-        alignItems: 'center',
-        height:50,
-        backgroundColor: '#86A8E7',
-        padding: 10,
-        margin:5,
-        borderRadius: 50,
-        borderColor:'white',
-        borderWidth : 1,
-        fontSize:30,
-        color:'#ffffff'
-    },
-    touchableUser:{
-      alignItems: 'center',
-      padding:10,
-      borderRadius: 50,
-      borderColor:'white',
-      borderWidth : 1,
-      margin:5,
-      marginTop:2,
-    },
-    btn:{
-      alignItems: 'center',
-      height:50,
-      backgroundColor: '#86A8E7',
-      padding: 10,
-      margin:10,
-      borderRadius: 50,
-      borderColor:'white',
-      borderWidth : 1
-    },
-    txt:{
-      textAlign: 'center',
-      fontSize:50
-    },
-
-    txtIn2: {
-      alignItems: 'center',
-      width:350,
-      height:55,
-      backgroundColor: 'transparent',
-      padding: 16,
-      marginLeft:16,
-      marginRight:16,
-      borderColor: '#5B3E96',
-      borderWidth: 2.2,
-      borderRadius: 55,
-
-    }, btn_login:{
-      alignItems: 'center',
-      justifyContent:'center',
-      width:85,
-      height:85,
-      backgroundColor: 'transparent',
-      padding: 16,
-      margin:16,
-      borderRadius: 800,
-      borderColor:'#FFFFFF',
-      borderWidth : 1
+  LabelRed:{
+    color:'#c78f3c',
+    textAlign:'center',
+    fontSize: 17
+},
+  counterText:{
+    fontSize: 50,
+    marginTop: 15,
+    color: '#FFFFFF'
   },
-
-    btn_register:{
-      alignItems: 'center',
-      width:50,
-      height:50,
-      backgroundColor: '#000000',
-      padding: 16,
-      marginRight:16,
-      borderRadius: 50,
-      borderColor:'#000000',
-      borderWidth : 1
-    },
-
-    MainContainer1:{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      right: 10  
-    },
-      
-    MainContainer2:{
-      flex: 4,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 5
-    },
-    
-    Text2:{
-      color:"#5B3E96",
-      fontSize: 17,
-      marginTop:5,
-      marginLeft : 2,
-      marginEnd : 2,
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-
-    photo3: {
-      height: 25,
-        width: 25,
-        marginRight:5,
-        marginLeft:5,
-        marginTop:5, 
-      alignItems: 'center',
-      justifyContent: 'center'
-    
-    
-    },
-    viewBtn: {
-      // height: 50,
-      backgroundColor: 'black',
-      padding: 16,
-      marginTop:16,
-      marginLeft:16,
-      marginRight:16,
-      borderColor: 'black',
-      borderWidth: 1,
-      borderRadius: 50,
-    },
-
+  circle1:{
+    padding: 5,
+    height: 90,
+    width: 90,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#0A2A12',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle2:{
+    padding: 5,
+    height: 86,
+    width: 86,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle3:{
+    padding: 5,
+    height: 82,
+    width: 82,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#0A2A12',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle4:{
+    padding: 5,
+    height: 90,
+    width: 90,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#1C1C1E',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle5:{
+    padding: 5,
+    height: 86,
+    width: 86,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle6:{
+    padding: 5,
+    height: 82,
+    width: 82,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#1C1C1E',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle7:{
+    padding: 5,
+    height: 90,
+    width: 90,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#332000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle8:{
+    padding: 5,
+    height: 86,
+    width: 86,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle9:{
+    padding: 5,
+    height: 82,
+    width: 82,
+    marginTop: 40,
+    marginBottom: 40,
+    borderRadius:400,
+    backgroundColor: '#332000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

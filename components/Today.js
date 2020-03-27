@@ -191,11 +191,14 @@ updateFail(){
 console.log("FailUpdate");
 }
 delete_Complete=async (id)=>{
+  let tmp2=''
+  let tmp3=''
   await database.updateStatus(id,this.state.email,(async()=>{
     // await database.CountTask(this.state.email,this.state.Date,count=>{this.setState({ Alltask: count })},this.countFail)
-    await database.CountToComplete(this.state.email,this.state.Date,count=>{this.setState({ ToCompletedTask: count })},this.countFail)
-    await database.CountComplete(this.state.email,this.state.Date,count=>{this.setState({ CompletedTask: count })},this.countFail)
-  
+    await database.CountToComplete(this.state.email,this.state.Date,count=>{tmp2=count },this.countFail)
+    await database.CountComplete(this.state.email,this.state.Date,count=>{tmp3=count },this.countFail)
+    this.setState({ ToCompletedTask: tmp2 })
+    this.setState({ CompletedTask: tmp3 })
   console.log("updateID");
   this.todo.update()
   }),this.updateFail)

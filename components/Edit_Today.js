@@ -49,7 +49,8 @@ export default class Edit_Today extends Component {
       singlePickerVisible: false,
       singlePickerSelectedItem: [],
       id:'',
-      des:''
+      des:'',
+      TaskPriority:'',
 
       
     };
@@ -77,6 +78,27 @@ export default class Edit_Today extends Component {
     this.setState({des:await AsyncStorage.getItem('@Des')})
 
     this.setState({email:await AsyncStorage.getItem('@email')})
+    this.setState({TaskPriority:await AsyncStorage.getItem('@TaskPriority')})
+    switch(this.state.TaskPriority){
+
+      case "3":    
+      this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZtY1.png" })
+      this.setState({ imgPre: "https://sv1.picz.in.th/images/2020/03/19/QiNa51.png" })
+        break;
+      case "2":
+        this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZwiy.png" })
+        this.setState({ imgPre: "https://sv1.picz.in.th/images/2020/03/19/Qi33PV.png" })
+        break;
+      case "1":
+        this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZsEe.png" })
+        this.setState({ imgPre: "https://sv1.picz.in.th/images/2020/03/19/QiBynN.png" })
+        break;
+      case "0":
+        this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZBDS.png" })
+      this.setState({ imgPre:"https://sv1.picz.in.th/images/2020/03/19/Qi4t3l.png" })
+        break;
+    }
+
     if (this.state.singlePickerSelectedItem.label == "HIGH PRIORITY") {
       this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZtY1.png" })
       this.setState({ imgPre: "https://sv1.picz.in.th/images/2020/03/19/QiNa51.png" })
@@ -164,17 +186,19 @@ export default class Edit_Today extends Component {
   console.log("here")
 }
  onPressAdd = async() => {
+   console.log("adddddddddddddddddddddddddd")
   if( this.state.message.trim() == ""){
     Alert.alert("Your task can't be empty")
   }
-  if(this.state.des == null){
+  else if(this.state.des == null){
     this.setState({des:''})
+    await this.addText();
   }
   else{
   await this.addText();
   }
   
-  this.textInput.clear() 
+
 };
 
 addText=async()=>{
@@ -436,50 +460,8 @@ getRepeat = () =>{
     }
 
 
-    RenderParker() {
-      if (this.state.parker) {
-        return (
-          // <DatePicker
-          //   style={{ width: 200,marginLeft:80 }}
-          //   ref={parker => {
-          //     this.datePicker = parker;
-          //   }}
-          //   date={this.state.datex}
-          //   mode="date"
-          //   placeholder="Select date"
-          //   format="DD/MM/YYYY HH:mm"
-          //   // minDate="2016-05-01"
-          //   // maxDate="2020-12-12"
-          //   confirmBtnText="OK"
-          //   cancelBtnText="Cancel"
-          //   onDateChange={date => {
-          //     this.setState({ datex: date});
-          //   }}
-          // />
-          <DatePickerIOS
-          style={{ flex: 0.36,width: '100%', marginTop:1 }}
-          date={this.state.chosenDate2}
-          onDateChange={this.setDate2}
-          mode="datetime"
-          
-        />
-        );
-      }
-      
-    }
-    renderRepeat() {
-      if (this.state.repeat) {
-        return (
-          <PickerIOS 
-          style={{ flex: 0.36,width: '100%', marginTop:1 }}
-              selectedValue={ this.state.selectRepeat }
-              onValueChange={(itemValue, itemIndex) => this.setState({ selectRepeat: itemValue})}>
-              { this.getRepeat() }
-            </PickerIOS>
-        );
-      }
-      
-    }
+    
+   
 }
 
 const SHORT_LIST = ["HIGH PRIORITY", "MEDIUM PRIORITY", "LOW PRIORITY","NONE PRIORITY"];

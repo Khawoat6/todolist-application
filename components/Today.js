@@ -13,6 +13,7 @@ import database from './Database3';
 
 
 export default class Today extends React.Component {
+  
   state = {
     email: '',
     message:'',
@@ -25,6 +26,7 @@ export default class Today extends React.Component {
     Alltask:'',
     ToCompletedTask:'',
     CompletedTask:'',
+ 
 
   };
 
@@ -99,11 +101,16 @@ onFocusFunction=async()=>{
   if (date.length == 1) {
     date = String('0') + String(date)
   }
-
+  let tmp1=''
+  let tmp2=''
+  let tmp3=''
   this.setState({ Date: year + '-' + month + '-' + date })
-  await database.CountTask(this.state.email,this.state.Date,count=>{this.setState({ Alltask: count })},this.countFail)
-  await database.CountToComplete(this.state.email,this.state.Date,count=>{this.setState({ ToCompletedTask: count })},this.countFail)
-  await database.CountComplete(this.state.email,this.state.Date,count=>{this.setState({ CompletedTask: count })},this.countFail)
+  await database.CountTask(this.state.email,this.state.Date,count=>{tmp1=count},this.countFail)
+  await database.CountToComplete(this.state.email,this.state.Date,count=>{ tmp2=count },this.countFail)
+  await database.CountComplete(this.state.email,this.state.Date,count=>{tmp3= count },this.countFail)
+  this.setState({ Alltask: tmp1 })
+  this.setState({ ToCompletedTask: tmp2 })
+  this.setState({ CompletedTask: tmp3 })
   this.update()
 }
 // update (){

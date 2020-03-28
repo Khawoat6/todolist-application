@@ -10,7 +10,7 @@ import ActionButton from 'react-native-action-button';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import database from './Database3';
-
+import Dialog from "react-native-dialog";
 
 export default class Upcoming extends React.Component {
   state = {
@@ -26,6 +26,9 @@ export default class Upcoming extends React.Component {
     Alltask:'',
     ToCompletedTask:'',
     CompletedTask:'',
+    TaskID:'',
+    dialogVisible: false,
+    Color:''
 
   };
 
@@ -151,10 +154,16 @@ onFocusFunction=async()=>{
 
 
     }
+    let tmp1=''
+    let tmp2=''
+    let tmp3=''
     this.setState({ Tomorrow: TomorrowYear + '-' + TomorrowMonth + '-' + TomorrowDate })
-    await database.CountTask(this.state.email,this.state.Tomorrow,count=>{this.setState({ Alltask: count })},this.countFail)
-    await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{this.setState({ ToCompletedTask: count })},this.countFail)
-    await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{this.setState({ CompletedTask: count })},this.countFail)
+    await database.CountTask(this.state.email,this.state.Tomorrow,count=>{tmp1= count},this.countFail)
+    await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{tmp2= count },this.countFail)
+    await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{tmp3= count },this.countFail)
+    this.setState({ Alltask: tmp1 })
+    this.setState({ ToCompletedTask: tmp2 })
+    this.setState({ CompletedTask: tmp3 })
     this.update()
 }
 countFail(){
@@ -219,12 +228,33 @@ await this.update();
 updateFail(){
 console.log("FailUpdate");
 }
-delete_Complete=async (id)=>{
-await database.updateStatus(id,this.state.email,(async()=>{
+delete_Complete=async ()=>{
+  this.setState({Priority:await AsyncStorage.getItem('@TaskPriority')})
+  switch (this.state.Priority){
+    case '3':
+     
+      await this.setState({Color:'#dc143c'})
+      break;
+    case '2' :
+      await this.setState({Color:'#daa520'})
+      break;
+    case '1':
+      await this.setState({Color:'#3cb371'})
+      break;
+    case '0':
+      await  this.setState({Color:'#666666'})
+      break;
+  }
+  let id = await AsyncStorage.getItem('@TaskID')
+  this.setState({ dialogVisible: false });
+  let tmp2=''
+  let tmp3=''
+await database.updateStatus(id,this.state.email,this.state.Color,(async()=>{
   // await database.CountTask(this.state.email,this.state.Date,count=>{this.setState({ Alltask: count })},this.countFail)
-  await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{this.setState({ ToCompletedTask: count })},this.countFail)
-  await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{this.setState({ CompletedTask: count })},this.countFail)
-
+  await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{tmp2= count },this.countFail)
+  await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{ tmp3= count },this.countFail)
+  this.setState({ ToCompletedTask: tmp2 })
+  this.setState({ CompletedTask: tmp3 })
 console.log("updateID");
 this.todo.update()
 }),this.updateFail)
@@ -266,6 +296,15 @@ this.props.navigation.navigate('Edit')
 
 
 }
+showDialog = () => {
+  // this.setState({TaskMessage:AsyncStorage.getItem('@Message')})
+  this.setState({ dialogVisible: true });
+};
+
+handleCancel = () => {
+  this.setState({ dialogVisible: false });
+};
+
 
 
 
@@ -377,7 +416,8 @@ this.props.navigation.navigate('Edit')
                                 
                                 <Items_upcome
                                     ref={todo => (this.todo = todo)}
-                                    onPressTodo={this.delete_Complete}
+                                    onPressTodo={async ()=>{ this.setState({message:await AsyncStorage.getItem('@Message')})
+                                       this.setState({ dialogVisible: true });}}
                                     onPressTodo2={() => this.props.navigation.navigate('Edit_Upcoming', { name: 'Edit_Upcoming' })}
                                    
                                       />
@@ -385,6 +425,17 @@ this.props.navigation.navigate('Edit')
                           </ScrollView>
                       </View>
                   </View>
+              </View>
+              <View>
+                <Dialog.Container visible={this.state.dialogVisible} >
+
+                  <Dialog.Title>done already?</Dialog.Title>
+                  <Dialog.Description fontSize="30">{this.state.message}</Dialog.Description>
+                  
+                  <Dialog.Button label="Cancel" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Done"  color="#6F41E9" bold="10" onPress={this.delete_Complete} />
+                  
+                </Dialog.Container>
               </View>
 
               <ActionButton buttonColor="rgba(75,21,184,2)" position="right">

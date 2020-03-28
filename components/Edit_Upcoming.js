@@ -49,7 +49,8 @@ export default class Edit_Upcoming extends Component {
       singlePickerVisible: false,
       singlePickerSelectedItem: [],
       id:'',
-      des:''
+      des:'',
+      TaskPriority:'',
 
       
     };
@@ -77,6 +78,27 @@ export default class Edit_Upcoming extends Component {
     this.setState({des:await AsyncStorage.getItem('@Des')})
 
     this.setState({email:await AsyncStorage.getItem('@email')})
+    this.setState({TaskPriority:await AsyncStorage.getItem('@TaskPriority')})
+    switch(this.state.TaskPriority){
+
+      case "3":    
+      this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZtY1.png" })
+      this.setState({ imgPre: "https://sv1.picz.in.th/images/2020/03/19/QiNa51.png" })
+        break;
+      case "2":
+        this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZwiy.png" })
+        this.setState({ imgPre: "https://sv1.picz.in.th/images/2020/03/19/Qi33PV.png" })
+        break;
+      case "1":
+        this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZsEe.png" })
+        this.setState({ imgPre: "https://sv1.picz.in.th/images/2020/03/19/QiBynN.png" })
+        break;
+      case "0":
+        this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZBDS.png" })
+      this.setState({ imgPre:"https://sv1.picz.in.th/images/2020/03/19/Qi4t3l.png" })
+        break;
+    }
+
     if (this.state.singlePickerSelectedItem.label == "HIGH PRIORITY") {
       this.setState({ imgPri: "https://sv1.picz.in.th/images/2020/03/03/xGZtY1.png" })
       this.setState({ imgPre: "https://sv1.picz.in.th/images/2020/03/19/QiNa51.png" })
@@ -167,14 +189,13 @@ export default class Edit_Upcoming extends Component {
   if( this.state.message.trim() == ""){
     Alert.alert("Your task can't be empty")
   }
-  if(this.state.des == null){
+  else if(this.state.des == null){
     this.setState({des:''})
+    await this.addText();
   }
   else{
   await this.addText();
   }
-  
-  this.textInput.clear() 
 };
 
 addText=async()=>{

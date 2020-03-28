@@ -181,7 +181,8 @@ addText=async()=>{
       id:'',
       PriImg:this.state.imgPre,
       Priority:this.state.Priority,
-      Des:this.state.Des
+      Des:this.state.Des,
+      Color:""
     }
     console.log(this.state.email)
    await  database.addMessageToday(this.state.email,Message,this.addMessageSuccess,this.addMessageFail)

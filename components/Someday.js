@@ -10,6 +10,7 @@ import ActionButton from 'react-native-action-button';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import database from './Database3';
+import Dialog from "react-native-dialog";
 
 
 export default class Someday extends React.Component {
@@ -25,7 +26,10 @@ export default class Someday extends React.Component {
     Tomorrow: '',
     Today:'',
     Upcoming:'',
-    count:''
+    count:'',
+    dialogVisible: false,
+    Color:''
+
 
   };
 
@@ -275,8 +279,26 @@ await this.update();
 updateFail(){
 console.log("FailUpdate");
 }
-delete_Complete=async (id)=>{
-await database.updateStatus(id,this.state.email,this.updateSuccess,this.updateFail)
+delete_Complete=async ()=>{
+  this.setState({Priority:await AsyncStorage.getItem('@TaskPriority')})
+  switch (this.state.Priority){
+    case '3':
+     
+      await this.setState({Color:'#dc143c'})
+      break;
+    case '2' :
+      await this.setState({Color:'#daa520'})
+      break;
+    case '1':
+      await this.setState({Color:'#3cb371'})
+      break;
+    case '0':
+      await  this.setState({Color:'#666666'})
+      break;
+  }
+  let id = await AsyncStorage.getItem('@TaskID')
+  this.setState({ dialogVisible: false });
+await database.updateStatus(id,this.state.email,this.state.Color,this.updateSuccess,this.updateFail)
 // await database.deleteTask(this.state.email,id,this.deleteSuccess,this.deleteFail);
 //this.onPressTrack();
 await this.update();
@@ -316,6 +338,16 @@ this.props.navigation.navigate('Edit')
 
 
 }
+
+showDialog = () => {
+  // this.setState({TaskMessage:AsyncStorage.getItem('@Message')})
+  this.setState({ dialogVisible: true });
+};
+
+handleCancel = () => {
+  this.setState({ dialogVisible: false });
+};
+
 
 
 
@@ -428,7 +460,8 @@ this.props.navigation.navigate('Edit')
                                 
                                 <Items_someday
                                     ref={todo => (this.todo = todo)}
-                                    onPressTodo={this.delete_Complete}
+                                    onPressTodo={async ()=>{ this.setState({message:await AsyncStorage.getItem('@Message')})
+                                    this.setState({ dialogVisible: true });}}
                                     onPressTodo2={() => this.props.navigation.navigate('Edit_Someday', { name: 'Edit_Someday' })}
                                     
                                       />
@@ -444,6 +477,18 @@ this.props.navigation.navigate('Edit')
 
                   </View>
               </View>
+              <View>
+                <Dialog.Container visible={this.state.dialogVisible} >
+
+                  <Dialog.Title>done already?</Dialog.Title>
+                  <Dialog.Description fontSize="30">{this.state.message}</Dialog.Description>
+                  
+                  <Dialog.Button label="Cancel" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Done"  color="#6F41E9" bold="10" onPress={this.delete_Complete} />
+                  
+                </Dialog.Container>
+              </View>
+
 
               <ActionButton buttonColor="rgba(75,21,184,2)" position="right">
                  <ActionButton.Item buttonColor='#000000' title="New Task" onPress={() =>  this.props.navigation.navigate('AddTask')}>

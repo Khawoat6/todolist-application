@@ -31,6 +31,7 @@ export default class Tomorrow extends React.Component {
     TaskMessage:'',
     TaskID:'',
     dialogVisible: false,
+    Color:''
 
   };
 
@@ -181,11 +182,28 @@ updateFail(){
   console.log("FailUpdate");
 }
 delete_Complete=async ()=>{
+
+  this.setState({Priority:await AsyncStorage.getItem('@TaskPriority')})
+  switch (this.state.Priority){
+    case '3':
+     
+      await this.setState({Color:'#dc143c'})
+      break;
+    case '2' :
+      await this.setState({Color:'#daa520'})
+      break;
+    case '1':
+      await this.setState({Color:'#3cb371'})
+      break;
+    case '0':
+      await  this.setState({Color:'#666666'})
+      break;
+  }
   let id = await AsyncStorage.getItem('@TaskID')
   this.setState({ dialogVisible: false });
   let tmp2=''
   let tmp3=''
-  await database.updateStatus(id,this.state.email,(async()=>{
+  await database.updateStatus(id,this.state.email,this.state.Color,(async()=>{
     // await database.CountTask(this.state.email,this.state.Date,count=>{this.setState({ Alltask: count })},this.countFail)
     await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{tmp2=count },this.countFail)
     await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{tmp3=count },this.countFail)

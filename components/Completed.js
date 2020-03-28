@@ -14,7 +14,7 @@ import database from './Database3';
 import { Card } from 'react-native-shadow-cards';
 import { LinearGradient } from 'expo-linear-gradient';
 
-
+import Dialog from "react-native-dialog";
 
 export default class Completed extends Component {
 
@@ -23,7 +23,8 @@ export default class Completed extends Component {
   message:'',
   time:'',
   Date:'',
-  Priority:''
+  Priority:'',
+  dialogVisible:false
 }
 
 onFocusFunction=async()=>{
@@ -96,7 +97,8 @@ await this.update();
 updateFail(){
 console.log("FailUpdate");
 }
-delete_Complete=async (id)=>{
+delete_Complete=async ()=>{
+  let id = await AsyncStorage.getItem('@TaskID')
 await database.deleteTask(this.state.email,id,this.deleteSuccess,this.deleteFail);
 //this.onPressTrack();
 await this.update();
@@ -135,6 +137,10 @@ this.props.navigation.navigate('Edit')
 
 
 }
+
+handleCancel = () => {
+  this.setState({ dialogVisible: false });
+};
 
 
 
@@ -185,18 +191,31 @@ style={{flex:1}} >
                         
                         <Items3
                             ref={Completed => (this.Completed = Completed)}
-                            onPressTodo={this.delete_Complete}
+                            onPressTodo={async ()=>{ this.setState({message:await AsyncStorage.getItem('@Message')})
+                                    
+                            this.setState({ dialogVisible: true });}}
                             onPressTodo2={() => this.props.navigation.navigate('Edit_Completed', { name: 'Edit_Completed' })}
                             
                               />
                         
                 </ScrollView>
+                <View>
+                <Dialog.Container visible={this.state.dialogVisible} >
+
+                  <Dialog.Title>Delete this task?</Dialog.Title>
+                  
+                  
+                  <Dialog.Button label="Cancel" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Done"  color="#6F41E9" bold="10" onPress={this.delete_Complete} />
+                  
+                </Dialog.Container>
+              </View>
 
 
 
 </LinearGradient>
              
-
+                  
 
 
 

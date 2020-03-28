@@ -156,7 +156,10 @@ export default class Items2 extends React.Component {
 
             <TouchableOpacity
               key={id}
-              onPress={() => this.props.onPressTodo(id)}
+              onPress={() => {this.props.onPressTodo(id)
+                AsyncStorage.setItem('@Message',message)  
+                AsyncStorage.setItem('@TaskID',id)     
+              }}
               style={{
                 backgroundColor: 'transparent',
                 borderColor: '#DADADA',

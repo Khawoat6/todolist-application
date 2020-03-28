@@ -10,6 +10,7 @@ import database from './Database3';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { Card } from 'react-native-shadow-cards';
+import Dialog from "react-native-dialog";
 
 
 export default class Tomorrow extends React.Component {
@@ -27,6 +28,9 @@ export default class Tomorrow extends React.Component {
     Alltask:'',
     ToCompletedTask:'',
     CompletedTask:'',
+    TaskMessage:'',
+    TaskID:'',
+    dialogVisible: false,
 
   };
 
@@ -103,11 +107,17 @@ export default class Tomorrow extends React.Component {
 
 
     }
+    let tmp1=''
+    let tmp2=''
+    let tmp3=''
     this.setState({ Tomorrow: TomorrowYear + '-' + TomorrowMonth + '-' + TomorrowDate })
-    await database.CountTask(this.state.email,this.state.Tomorrow,count=>{this.setState({ Alltask: count })},this.countFail)
-    await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{this.setState({ ToCompletedTask: count })},this.countFail)
-    await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{this.setState({ CompletedTask: count })},this.countFail)
-    this.update()
+    await database.CountTask(this.state.email,this.state.Tomorrow,count=>{tmp1=count},this.countFail)
+    await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{tmp2=count},this.countFail)
+    await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{tmp3=count},this.countFail)
+    this.setState({ Alltask: await tmp1 })
+    this.setState({ ToCompletedTask:await tmp2 })
+    this.setState({ CompletedTask:await tmp3 })
+    await this.update()
   }
   // update (){
   //   this.todo.update();
@@ -170,12 +180,17 @@ async updateSuccess(){
 updateFail(){
   console.log("FailUpdate");
 }
-delete_Complete=async (id)=>{
+delete_Complete=async ()=>{
+  let id = await AsyncStorage.getItem('@TaskID')
+  this.setState({ dialogVisible: false });
+  let tmp2=''
+  let tmp3=''
   await database.updateStatus(id,this.state.email,(async()=>{
     // await database.CountTask(this.state.email,this.state.Date,count=>{this.setState({ Alltask: count })},this.countFail)
-    await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{this.setState({ ToCompletedTask: count })},this.countFail)
-    await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{this.setState({ CompletedTask: count })},this.countFail)
-  
+    await database.CountToComplete(this.state.email,this.state.Tomorrow,count=>{tmp2=count },this.countFail)
+    await database.CountComplete(this.state.email,this.state.Tomorrow,count=>{tmp3=count },this.countFail)
+    this.setState({ ToCompletedTask: tmp2 })
+    this.setState({ CompletedTask: tmp3 })
   console.log("updateID");
   this.todo.update()
   }),this.updateFail)
@@ -217,6 +232,17 @@ deleteFail(){
  
 
 }
+showDialog = () => {
+  // this.setState({TaskMessage:AsyncStorage.getItem('@Message')})
+  this.setState({ dialogVisible: true });
+};
+
+handleCancel = () => {
+  this.setState({ dialogVisible: false });
+};
+
+
+
 
 render() {
   return (
@@ -324,15 +350,28 @@ render() {
                               
                               <Items_Tomorrow
                                   ref={todo => (this.todo = todo)}
-                                  onPressTodo={this.delete_Complete}
+                                  onPressTodo={async ()=>{ this.setState({message:await AsyncStorage.getItem('@Message')})
+                                  this.setState({ dialogVisible: true });}}
                                   onPressTodo2={() => this.props.navigation.navigate('Edit_Tomorrow', { name: 'Edit_Tomorrow' })}
                                   
                                     />
 
                         </ScrollView>
                     </View>
+
                 </View>
             </View>
+            <View>
+                <Dialog.Container visible={this.state.dialogVisible} >
+
+                  <Dialog.Title>done already?</Dialog.Title>
+                  <Dialog.Description fontSize="30">{this.state.message}</Dialog.Description>
+                  
+                  <Dialog.Button label="Cancel" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Done"  color="#6F41E9" bold="10" onPress={this.delete_Complete} />
+                  
+                </Dialog.Container>
+              </View>
 
             <ActionButton buttonColor="rgba(75,21,184,2)" position="right">
                  <ActionButton.Item buttonColor='#000000' title="New Task" onPress={() =>  this.props.navigation.navigate('AddTask')}>

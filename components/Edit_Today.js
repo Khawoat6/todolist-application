@@ -362,7 +362,7 @@ getRepeat = () =>{
                   </ScrollView>
               </View>
           </View> 
-
+            
           {/* <MenuProvider style={{flex:1,marginLeft:30}}>
             <View>
               <Menu>

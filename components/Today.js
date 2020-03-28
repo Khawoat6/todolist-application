@@ -10,7 +10,7 @@ import ActionButton from 'react-native-action-button';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import database from './Database3';
-
+import Dialog from "react-native-dialog";
 
 export default class Today extends React.Component {
   
@@ -26,7 +26,10 @@ export default class Today extends React.Component {
     Alltask:'',
     ToCompletedTask:'',
     CompletedTask:'',
- 
+    TaskMessage:'',
+    TaskID:'',
+    dialogVisible: false,
+
 
   };
 
@@ -190,7 +193,10 @@ async updateSuccess(){
 updateFail(){
 console.log("FailUpdate");
 }
-delete_Complete=async (id)=>{
+delete_Complete=async ()=>{
+  // this.setState({TaskMessage:AsyncStorage.getItem('@Message')})
+  let id = await AsyncStorage.getItem('@TaskID')
+  this.setState({ dialogVisible: false });
   let tmp2=''
   let tmp3=''
   await database.updateStatus(id,this.state.email,(async()=>{
@@ -240,6 +246,15 @@ this.props.navigation.navigate('Edit')
 
 
 }
+
+showDialog = () => {
+  // this.setState({TaskMessage:AsyncStorage.getItem('@Message')})
+  this.setState({ dialogVisible: true });
+};
+
+handleCancel = () => {
+  this.setState({ dialogVisible: false });
+};
 
 
 
@@ -351,13 +366,25 @@ this.props.navigation.navigate('Edit')
                                 
                                 <Items2
                                     ref={todo => (this.todo = todo)}
-                                    onPressTodo={this.delete_Complete}
+                                    onPressTodo={async ()=>{ this.setState({message:await AsyncStorage.getItem('@Message')})
+                                       this.setState({ dialogVisible: true });}}
                                     onPressTodo2={() => this.props.navigation.navigate('Edit_Today', { name: 'Edit_Today' })}
                                       />
 
                           </ScrollView>
                       </View>
                   </View>
+              </View>
+              <View>
+                <Dialog.Container visible={this.state.dialogVisible} >
+
+                  <Dialog.Title>done already?</Dialog.Title>
+                  <Dialog.Description fontSize="30">{this.state.message}</Dialog.Description>
+                  
+                  <Dialog.Button label="Cancel" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Done"  color="#6F41E9" bold="10" onPress={this.delete_Complete} />
+                  
+                </Dialog.Container>
               </View>
 
               <ActionButton buttonColor="rgba(75,21,184,2)" position="right">

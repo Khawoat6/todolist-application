@@ -152,9 +152,10 @@ async DelNote(User,id,del_Message_success,del_Message_fail){
       
     }
   }
-  async updateStatus(ID,User,addSuccess,addFail){
+  async updateStatus(ID,User,color,addSuccess,addFail){
     try{
     await firebase.firestore().collection("Todo").doc(User).collection("Today").doc(ID).update({status:'0'})
+    await firebase.firestore().collection("Todo").doc(User).collection("Today").doc(ID).update({Color:color})
       addSuccess();
     }
     catch(e){

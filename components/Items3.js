@@ -86,7 +86,7 @@ export default class Items3 extends React.Component {
     return (
 
         <View style={{flex:1,alignItems:'center' ,flexDirection:'column',justifyContent: 'center',backgroundColor:"#transparent",alignContent:'center', marginTop:'8%'}}>
-        {items.map(({ Date,id, message,time,PriImg,Des }) => (
+        {items.map(({ Date,id, message,time,PriImg,Des,Color,Priority}) => (
          
 
         <Card style={{ flex:1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', borderRadius: 20, marginTop: 12,padding:8}} >
@@ -97,7 +97,8 @@ export default class Items3 extends React.Component {
           
           <TouchableOpacity
             key={id}
-            onPress={() => this.props.onPressTodo(id)}
+            onPress={() =>{ this.props.onPressTodo(id)
+              AsyncStorage.setItem('@TaskPriority',Priority)}}
             style={{
               backgroundColor: 'transparent', 
               borderColor: '#DADADA',
@@ -107,16 +108,17 @@ export default class Items3 extends React.Component {
               
             }}
           >   
-             <Image style={{marginLeft:"5%",marginTop:"3%",width:25,height:25}} source={{uri:'https://sv1.picz.in.th/images/2020/02/26/xCLwtn.png'}}/>
-           
+             <Image style={{marginLeft:"5%",marginTop:"3%",width:25,height:25,tintColor:Color}} source={{uri:'https://sv1.picz.in.th/images/2020/02/26/xCLwtn.png'}}/>
+          
           </TouchableOpacity>
           <View style={{ flex: 1, marginLeft: "1%" ,flexDirection:"column"}}>
           <Text style={{ color:"#C4C4C4", textDecorationLine:'line-through', fontStyle:'italic', fontSize:16}} 
-          onPress={() => {this.props.onPressTodo3(id)}}
+          
           onPress={() => { this.props.onPressTodo2(id) 
             AsyncStorage.setItem('@TaskID',id)
             AsyncStorage.setItem('@Message',message) 
             AsyncStorage.setItem('@Des',Des) 
+            AsyncStorage.setItem('@TaskPriority',Priority)
                  }}
           >{message}</Text>
           <Text  style={{ color: "#C4C4C4", fontSize:12, textDecorationLine:'line-through', fontStyle:'italic' }}>Date: {Date}</Text>

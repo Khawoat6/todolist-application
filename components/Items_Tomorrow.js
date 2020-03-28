@@ -145,7 +145,7 @@ export default class Items_Tomorrow extends React.Component {
     return (
 
       <View style={{ flex: 1, alignItems: 'center', flexDirection: 'column', justifyContent: 'center', backgroundColor: "#transparent", alignContent: 'center' }}>
-        {items.map(({ Date, id, message, time ,PriImg,Des,Priority}) => (
+        {items.map(({ Date, id, message, time ,PriImg,Des,Priority,Date2}) => (
 
 
           <Card style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', borderRadius: 20, marginTop: 12,padding:8  }} >
@@ -179,6 +179,7 @@ export default class Items_Tomorrow extends React.Component {
                                                                              AsyncStorage.setItem('@Message',message) 
                                                                              AsyncStorage.setItem('@Des',Des) 
                                                                              AsyncStorage.setItem('@TaskPriority',Priority)
+                                                                            //  AsyncStorage.setItem('@Date2',Date2)
                                                                                   }}>{message}</Text>
                <Text style={{ color: "#4B15B8", fontSize:12 }} >Date: {Date}</Text>
             </View>

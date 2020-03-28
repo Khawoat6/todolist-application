@@ -51,6 +51,7 @@ export default class Edit_Tomorrow extends Component {
       id:'',
       des:'',
       TaskPriority:'',
+      tmpDate:null
 
       
     };
@@ -73,7 +74,9 @@ export default class Edit_Tomorrow extends Component {
   onFocusFunction=async()=>{
     this.setState({Message:await AsyncStorage.getItem('@Message')})
     this.setState({message:await AsyncStorage.getItem('@Message')})
+    
 
+    
     this.setState({id:await AsyncStorage.getItem('@TaskID')})
     this.setState({des:await AsyncStorage.getItem('@Des')})
 
@@ -119,7 +122,8 @@ export default class Edit_Tomorrow extends Component {
     
     }
     
-   
+    this.setState({tmpDate:await AsyncStorage.getItem('@Date2')})
+    console.log(typeof(this.state.tmpDate))
     var myJSON = await JSON.stringify(this.state.chosenDate);
     console.log(this.state.chosenDate)
      myJSON= await myJSON.slice(1,11)
@@ -132,6 +136,10 @@ export default class Edit_Tomorrow extends Component {
   
   }
   componentDidMount(){
+    var today = new Date()
+    var tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    this.setState({ chosenDate: tomorrow })
 
     this.onFocusFunction();
     // this.FocusFunction()
@@ -449,6 +457,8 @@ getRepeat = () =>{
           style={{ flex: 0.33,width: '100%', height:'2%', marginTop:1 }}
           date={this.state.chosenDate}
           onDateChange={this.setDate}
+          // format="DD/MM/YYYY"
+          // minDate="2020-03-27"
           
           mode="date"
         />

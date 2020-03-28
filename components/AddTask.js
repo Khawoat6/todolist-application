@@ -47,7 +47,8 @@ export default class AddTask extends Component {
       imgPre:'https://sv1.picz.in.th/images/2020/03/19/Qi4t3l.png',
       singlePickerVisible: false,
       singlePickerSelectedItem: [],
-      Des:''
+      Des:'',
+      Edit_Date:''
 
       
     };
@@ -108,6 +109,9 @@ export default class AddTask extends Component {
 
   
   async setDate(newDate) {
+    
+    
+    console.log(this.state.Edit_Date)
     var myJSON = await JSON.stringify(newDate);
     console.log(typeof(myJSON))
     console.log(myJSON)
@@ -115,8 +119,9 @@ export default class AddTask extends Component {
     console.log(myJSON)
     await this.setState({chosenDate:newDate})
     await this.setState({date: myJSON});
-    
+    await this.setState({Edit_Date:myJSON})
     console.log(this.state.date)
+    
   }
 
   async setDate2(newDate) {
@@ -182,7 +187,8 @@ addText=async()=>{
       PriImg:this.state.imgPre,
       Priority:this.state.Priority,
       Des:this.state.Des,
-      Color:""
+      Color:"",
+      // Date2:this.state.Edit_Date
     }
     console.log(this.state.email)
    await  database.addMessageToday(this.state.email,Message,this.addMessageSuccess,this.addMessageFail)
@@ -421,50 +427,8 @@ getRepeat = () =>{
     }
 
 
-    RenderParker() {
-      if (this.state.parker) {
-        return (
-          // <DatePicker
-          //   style={{ width: 200,marginLeft:80 }}
-          //   ref={parker => {
-          //     this.datePicker = parker;
-          //   }}
-          //   date={this.state.datex}
-          //   mode="date"
-          //   placeholder="Select date"
-          //   format="DD/MM/YYYY HH:mm"
-          //   // minDate="2016-05-01"
-          //   // maxDate="2020-12-12"
-          //   confirmBtnText="OK"
-          //   cancelBtnText="Cancel"
-          //   onDateChange={date => {
-          //     this.setState({ datex: date});
-          //   }}
-          // />
-          <DatePickerIOS
-          style={{ flex: 0.36,width: '100%', marginTop:1 }}
-          date={this.state.chosenDate2}
-          onDateChange={this.setDate2}
-          mode="datetime"
-          
-        />
-        );
-      }
-      
-    }
-    renderRepeat() {
-      if (this.state.repeat) {
-        return (
-          <PickerIOS 
-          style={{ flex: 0.36,width: '100%', marginTop:1 }}
-              selectedValue={ this.state.selectRepeat }
-              onValueChange={(itemValue, itemIndex) => this.setState({ selectRepeat: itemValue})}>
-              { this.getRepeat() }
-            </PickerIOS>
-        );
-      }
-      
-    }
+   
+    
 }
 
 const SHORT_LIST = ["HIGH PRIORITY", "MEDIUM PRIORITY", "LOW PRIORITY","NONE PRIORITY"];

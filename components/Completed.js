@@ -99,6 +99,7 @@ console.log("FailUpdate");
 }
 delete_Complete=async ()=>{
   let id = await AsyncStorage.getItem('@TaskID')
+  this.setState({ dialogVisible: false });
 await database.deleteTask(this.state.email,id,this.deleteSuccess,this.deleteFail);
 //this.onPressTrack();
 await this.update();

@@ -134,6 +134,11 @@ export default class Edit_Upcoming extends Component {
   }
   componentDidMount(){
 
+    var today = new Date()
+    var tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 2)
+    this.setState({ chosenDate: tomorrow })
+  
     this.onFocusFunction();
     // this.FocusFunction()
     this.setState({time:firebase.firestore.FieldValue.serverTimestamp()})

@@ -159,6 +159,7 @@ export default class Items_Tomorrow extends React.Component {
               onPress={() =>{ this.props.onPressTodo(id)
                 AsyncStorage.setItem('@Message',message)  
                 AsyncStorage.setItem('@TaskID',id)    
+                AsyncStorage.setItem('@TaskPriority',Priority)  
               }}
               style={{
                 backgroundColor: 'transparent',

@@ -158,7 +158,8 @@ export default class Items2 extends React.Component {
               key={id}
               onPress={() => {this.props.onPressTodo(id)
                 AsyncStorage.setItem('@Message',message)  
-                AsyncStorage.setItem('@TaskID',id)     
+                AsyncStorage.setItem('@TaskID',id)  
+                AsyncStorage.setItem('@TaskPriority',Priority)    
               }}
               style={{
                 backgroundColor: 'transparent',

@@ -570,10 +570,13 @@ class Database{
         read_Fail()
         return;
       }
-      snapshot.forEach(doc=>{
+      snapshot.forEach(async doc=>{
         // console.log(doc.data())
         // array.push(Object.values(doc.data()))
-        array.push(doc.data())
+        await firebase.firestore().collection("Account").doc(doc.id).get().then(data=>{
+          array.push(data.data())
+        })
+     
         // read_Message_success(doc.data())
         
         })

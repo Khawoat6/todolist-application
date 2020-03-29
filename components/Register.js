@@ -90,17 +90,17 @@ export default class Register extends React.Component {
             <View style={{ flex: 1, marginTop: 60 }}>
               <TextInput
                   style={styles.txtIn2}
-                  placeholder="firstname"
+                  placeholder="username"
                   maxLength={15}
                   onChangeText={this.onChangeTextname}
               />
               <Text style={styles.txt}> </Text>
-              <TextInput
+              {/* <TextInput
                   style={styles.txtIn2}
                   placeholder="lastname"
                   maxLength={15}
                   onChangeText={this.onChangeTextlast}
-              />
+              /> */}
               <Text style={styles.txt}> </Text>
               <TextInput
                   style={styles.txtIn2}

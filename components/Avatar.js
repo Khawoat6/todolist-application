@@ -68,6 +68,7 @@ export default class Avatar extends Component {
     await AsyncStorage.setItem('@uri', this.state.uploaduri);
     this.setState({button_State:false})
     Alert.alert("Add Avatar Success");
+    this.props.navigation.navigate('Account')
   }
   add_fail = async (error) => {
     Alert.alert("Add Avatar Fail");

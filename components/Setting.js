@@ -82,7 +82,7 @@ export default class AccountLogin extends React.Component {
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => this.onPressAccount()}>
               <Image style={{ marginLeft: 30, marginRight: 10, width: 45, height: 45, borderRadius: 800 }} source={{ uri: this.state.uri }} />
               <View style={{ flexDirection: 'column' }} >
-                <Text style={{ fontSize: 18, color: '#171D33', marginLeft: 2, marginEnd: 3, alignItems: 'center', justifyContent: 'center', fontWeight:"bold" }}>{this.state.name} {this.state.last}</Text>
+                <Text style={{ fontSize: 18, color: '#171D33', marginLeft: 2, marginEnd: 3, alignItems: 'center', justifyContent: 'center', fontWeight:"bold" }}>{this.state.name} </Text>
                 <Text style={{ fontSize: 12, marginTop: 3, color: '#C4C4C4' }}> Synchonize whitin all devides.</Text>
               </View>
             </TouchableOpacity>

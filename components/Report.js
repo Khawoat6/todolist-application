@@ -54,8 +54,12 @@ export default class Report extends React.Component {
     var notDone = allwork-success;
     console.log(notDone)
     console.log("Size obj is: " + allwork + " and work success: " + success)
+    var tmp =calc.toFixed(0)
+    if(isNaN(tmp)){
+      tmp=0
+    }
 
-    this.setState({sizeObj: allwork, success:success,Uncomplete:notDone, percen: calc.toFixed(0)})
+    this.setState({sizeObj: allwork, success:success,Uncomplete:notDone, percen: tmp})
   }
 
   fail_callback() {
@@ -68,10 +72,27 @@ onAsyncReadPri=async ()=>{
 }
 priority_callback = (data, allwork,priority0,priority1,priority2,priority3) =>{
   //console.log(data)
-  var pri0 = ((priority0/allwork)*100);
-  var pri1 = ((priority1/allwork)*100);
-  var pri2 = ((priority2/allwork)*100);
-  var pri3 = ((priority3/allwork)*100);
+  var pri0=0
+  var pri1=0
+  var pri2=0
+  var pri3=0
+   pri0 = ((priority0/allwork)*100);
+   pri1 = ((priority1/allwork)*100);
+   pri2 = ((priority2/allwork)*100);
+   pri3 = ((priority3/allwork)*100);
+   if(isNaN(pri0)){
+     pri0=0
+   }
+   if(isNaN(pri1)){
+    pri1=0
+  }
+  if(isNaN(pri2)){
+    pri2=0
+  }
+  if(isNaN(pri3)){
+    pri3=0
+  }
+  
   console.log("Size obj is: " + allwork + "PriorityRed :"+pri3 + "PriorityYellow :"+ pri2 +"PriorityGreen :"+pri1+ "PriorityGray :"+pri0)
   this.setState({pRed:pri3.toFixed(2),
                   pYellow:pri2.toFixed(2),

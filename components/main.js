@@ -133,7 +133,7 @@ export default class main extends React.Component {
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} >
               <View style={{ flexDirection: 'column' }} >
                 <Text style={{ fontSize: 18, color: '#171D33', marginTop: 15, marginLeft: 2, marginEnd: 3, alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', }}>{this.state.name}</Text>
-                <Text style={{ fontSize: 18, color: '#171D33', marginTop: "1%", marginLeft: 2, marginEnd: 3, alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', }}>{this.state.last}</Text>
+                {/* <Text style={{ fontSize: 18, color: '#171D33', marginTop: "1%", marginLeft: 2, marginEnd: 3, alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', }}>{this.state.last}</Text> */}
 
               </View>
               {/* <View style={{flexDirection:'row',justifyContent:'center',alignContent:'center',alignItems:'center'}}>

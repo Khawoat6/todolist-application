@@ -415,7 +415,7 @@ getRepeat = () =>{
           //   }}
           // />
           <DatePickerIOS
-          style={{ flex: 0.6,width: '100%', height:'2%', marginTop:1 }}
+          style={{ flex: 0.38,width: '100%', height:'2%', marginTop:1 }}
           date={this.state.chosenDate}
           onDateChange={this.setDate}
           

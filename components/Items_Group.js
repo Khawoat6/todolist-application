@@ -55,9 +55,9 @@ export default class Items_GroupNew extends React.Component {
   //   this.props.navigation.navigate('GroupDetail')
   // }
 
-  onPressRegister(){
-    this.props.navigation.navigate('Register')
-  }
+  // onPressRegister(){
+  //   this.props.navigation.navigate('Register')
+  // }
 
   render() {
     

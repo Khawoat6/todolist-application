@@ -146,7 +146,7 @@ async update(){
 
             <View style={{flex:1,flexDirection:'column',backgroundColor:'#F6F6F6'}} >
               
-              <Text style={{fontSize:25 , color:'#666666', marginLeft:'5%',marginTop:'10%', fontWeight:'bold'}}>My Group</Text>
+                <Text style={{fontSize:25 , color:'#666666', marginLeft:'5%',marginTop:'10%', fontWeight:'bold'}}>My Group</Text>
           
                 <View style={{flex:1,flexDirection:'column',justifyContent:'center' ,alignContent:'center',backgroundColor:'transparent'}}>
                     <ScrollView style={{flex:1,flexDirection:'column',backgroundColor:'#transparent',marginTop:"5%"}}>

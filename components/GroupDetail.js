@@ -321,19 +321,19 @@ leave_F(){
                 /> */}
 
 
-        <View>
-          <LinearGradient colors={['#000000', '#FFFFFF']}>
-            <View style={{height:110,}}></View>
-              <Image style={styles.avatar} source={{uri:this.state.groupUri}}/>
-              <View style={styles.body}>
-                <View style={styles.bodyContent}>
-                  <Text style={styles.name}>{this.state.group}</Text>
-                  <Text style={styles.description}>{this.state.des}</Text>
-                  {/* <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis</Text> */}
+          <View>
+              <LinearGradient colors={['#000000', '#FFFFFF']}>
+                <View style={{height:110,}}></View>
+                  <Image style={styles.avatar} source={{uri:this.state.groupUri}}/>
+                  <View style={styles.body}>
+                    <View style={styles.bodyContent}>
+                      <Text style={styles.name}>{this.state.group}</Text>
+                      <Text style={styles.description}>{this.state.des}</Text>
+                      {/* <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis</Text> */}
+                    </View>
                 </View>
-            </View>
-          </LinearGradient> 
-      </View>
+              </LinearGradient> 
+          </View>
 
 
           <View style={{ flex: 1, marginTop: '3%', backgroundColor: "#transparent", alignItems: 'center', }}>

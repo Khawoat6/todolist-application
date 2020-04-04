@@ -138,6 +138,20 @@ class Database{
     }
 
   }
+  async updateName(id,Name,add_Account_success,add_Account_fail)
+  {
+    //set ชื่อ doc
+    try {
+      await firebase.firestore().collection("Account").doc(id).update({name:Name})
+      add_Account_success();
+    } catch (e) {
+      add_Account_fail();
+    } finally {
+
+    }
+
+  }
+
   async addImage(id,url,add_Account_success,add_Account_fail)
   {
     //set ชื่อ doc

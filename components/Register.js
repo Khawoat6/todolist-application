@@ -21,8 +21,8 @@ export default class Register extends React.Component {
   }
   onPressAddAccount = () => {
   
-    if(this.state.name.length==0 || this.state.last ==0){
-      Alert.alert("Please fill in your name or last name")
+    if(this.state.name.length==0) {
+      Alert.alert("Please fill in your name ")
     }
     else if(this.state.email.length==0 ){
       Alert.alert("Please fill in your email")

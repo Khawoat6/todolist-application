@@ -142,7 +142,8 @@ export default class Items_GroupNew extends React.Component {
 
             <TouchableOpacity
               key={id}
-              onPress={() => this.props.onPressTodo(id)}
+              onPress={() => {this.props.onPressTodo(id)
+                AsyncStorage.setItem('@TaskID',id)}}
               style={{flex:1, backgroundColor: 'transparent', borderColor: '#DADADA', padding:8, borderRadius:10 }} >
 
               <Image style={{ marginLeft:"5%", width:25, height:25 }} source={{ uri: 'https://sv1.picz.in.th/images/2020/02/27/x6iuI2.png' }} />

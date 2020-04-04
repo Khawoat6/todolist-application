@@ -3,6 +3,7 @@ import { Container, Header, Title, Button, Icon, Content, InputGroup, Input } fr
 import { StyleSheet, Text, View,TouchableOpacity,Image, Alert, TextInput, ScrollView ,AsyncStorage} from 'react-native';
 import Constants from "expo-constants";
 import Dialog from "react-native-dialog";
+import database from './Database';
 
 export default class Account extends React.Component {
   state = {
@@ -11,6 +12,7 @@ export default class Account extends React.Component {
     last:'',
     uri: 'https://sv1.picz.in.th/images/2020/01/23/RuEI4z.png',
     dialogVisible: false,
+    newName:''
   };
 onFocusFunction=async() =>{
    
@@ -72,6 +74,18 @@ componentDidMount(){
   handleCancel = () => {
     this.setState({ dialogVisible: false });
   };
+  handleAdd=async()=>{
+    await database.updateName(this.state.email,this.state.newName,async()=>{await AsyncStorage.setItem('@name',this.state.newName)
+    await this.setState({name:this.state.newName})
+    await this.setState({ dialogVisible: false });
+  },this.up_F)
+  }
+  up_S(){
+
+  }
+  up_F(){
+
+  }
 
   render() {
     return (
@@ -149,10 +163,10 @@ componentDidMount(){
 
                   <Dialog.Title>Change username ?</Dialog.Title>
                   <Dialog.Description>please fill your new username</Dialog.Description>
-                  <Dialog.Input onChangeText={name => this.setState({name})} maxLength={35} color="#000000"/>
+                  <Dialog.Input onChangeText={newName => this.setState({newName})} maxLength={35} color="#000000"/>
                   
                   <Dialog.Button label="Cancel" color="#6F41E9" bold="10" onPress={this.handleCancel} />
-                  <Dialog.Button label="Add"  color="#6F41E9" bold="10" onPress={this.handleAdd} />
+                  <Dialog.Button label="Change"  color="#6F41E9" bold="10" onPress={this.handleAdd} />
                   
                 </Dialog.Container>
               </View>

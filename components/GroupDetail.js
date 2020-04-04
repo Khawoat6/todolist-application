@@ -17,6 +17,7 @@ import { Avatar } from 'react-native-elements';
 import CalendarStrip from 'react-native-calendar-strip';
 import Dialog from "react-native-dialog";
 import Items_Members from './Items_Members'
+import * as ImagePicker from 'expo-image-picker';
 
 
 export default class GroupDetail extends React.Component {
@@ -36,25 +37,70 @@ export default class GroupDetail extends React.Component {
     Alltask:'',
     ToCompletedTask:'',
     CompletedTask:'',
-    groupUri:''
+    groupUri:'',
+    dialogVisible2: false,
+    uploaduri:'',
+    dialogVisible3: false, 
+    dialogVisible4:false,
+    tmp:'0',
+    dialogtext:'wanna change your group image ?'
  
+  };
+  pickImage = async () => {
+    // await this.setState({ dialogVisible3: false });
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: false,
+      aspect: [4, 3],
+      quality: 1
+    });
+
+    console.log(result);
+    if (!result.cancelled) {
+      await this.setState({ dialogVisible3: false });
+      await this.setState({ groupUri: result.uri });
+   
+      //  await this.setState({ dialogVisible4: true });
+      // this.handleCancel()
+    }
+    console.log(this.state.groupUri) 
+
+
   };
 
   showDialog = () => {
     this.setState({ dialogVisible: true });
   };
+  showDialog4 = () => {
+    this.setState({ dialogVisible4: true });
+    console.log(this.state.dialogVisible4)
+  };
  
   handleCancel = () => {
     this.setState({ dialogVisible: false });
+    this.setState({ dialogVisible2: false });
+    this.setState({ dialogVisible3: false });
+    // this.setState({ dialogVisible4: true });
+    this.setState({ dialogVisible4: false });
+
   };
-  delete_Complete=async (id)=>{
-    
+  upload_fail = async (error) => {
+    Alert.alert(error);
+
+  }
+  uploading_status = async () => {
+    // this.setState({ txtButton: progress });
+  }
+  delete_Complete=async ()=>{
+    let id = await AsyncStorage.getItem('@TaskID')
     await database.updateStatus(id,this.state.group,this.deleteSuccess,this.deleteFail)
     // await database.deleteTask(this.state.email,id,this.deleteSuccess,this.deleteFail);
     // await database.CountTask(this.state.group,count=>{this.setState({ Alltask: count })},this.countFail)
     await database.CountToComplete(this.state.group,count=>{this.setState({ ToCompletedTask: count })},this.countFail)
     await database.CountComplete(this.state.group,count=>{this.setState({ CompletedTask: count })},this.countFail)
     //this.onPressTrack();
+    await this.setState({ dialogVisible2: false });
     this.Task.update();
     
     
@@ -68,6 +114,15 @@ export default class GroupDetail extends React.Component {
     this.Task.update();
   console.log("del fail")
   }
+  showDialog2 = () => {
+    // this.setState({TaskMessage:AsyncStorage.getItem('@Message')})
+    this.setState({ dialogVisible2: true });
+  };
+  
+  handleCancel2 = () => {
+    this.setState({ dialogVisible2: false });
+  };
+  
     
   handleAdd = async() => {
     // The user has pressed the "Delete" button, so here you can do your own logic.
@@ -97,11 +152,11 @@ export default class GroupDetail extends React.Component {
   async addMessage_Success(id){
     //await database.updateID(id,this.state.group,this.update_Success,this.update_Fail)
     
-    this.Task.update();
+    // this.Task.update();
     console.log("Success")
   }
   addMessage_Fail(){
-    this.Task.update();
+    // this.Task.update();
     console.log("Fail")
   }
   update_Success(){
@@ -191,6 +246,42 @@ countSuccess(count){
 }
 countFail(){
 
+}
+upload_success = async (uri) => {
+  this.setState({ uploaduri: uri });
+  // url=await this.createURL()
+  // await database.addImage(this.state.id,url,this.add_success,this.add_fail)
+  // this.setState({txtButton:"Success"});
+  
+
+  this.addURL()
+
+
+}
+add_success = async (error) => {
+
+  
+  
+}
+add_fail = async (error) => {
+  // Alert.alert("Add Avatar Fail");
+
+}
+addURL = async () => {
+
+  await database.addImageGroup(this.state.group, this.state.uploaduri, this.add_success, this.add_fail)
+  await database.readImgGroup(this.state.group,this.state.email,this.update_S,this.update_F)
+  this.setState({ txtButton: "Success" });
+  await this.setState({tmp:'0'})
+  await this.setState({dialogtext:'wanna change your group image ?'})
+  await this.setState({ dialogVisible3: false });
+
+}
+update_S(){
+  // this.props.navigation.navigate('Group')
+}
+update_F(){
+  console.log("Fail")
 }
 componentDidMount(){
 
@@ -282,6 +373,7 @@ leave_F(){
           </View>
           <TouchableOpacity onPress={()=>this.onPressLeaveGroup()}>
             <View  style={{flex: 1, alignItems: 'center',justifyContent: 'center', marginRight:'8%'}}>
+
               <Image style={{width: 20, height: 20}}source={{uri: 'https://sv1.picz.in.th/images/2020/03/18/Qc7eXQ.png' }}/>
             </View>
           </TouchableOpacity>
@@ -324,7 +416,9 @@ leave_F(){
           <View>
               <LinearGradient colors={['#000000', '#FFFFFF']}>
                 <View style={{height:110,}}></View>
+                    <TouchableOpacity style={{  alignSelf:'center',position: 'absolute'}} onPress={()=>{this.setState({dialogVisible3:true})}} >
                   <Image style={styles.avatar} source={{uri:this.state.groupUri}}/>
+                  </TouchableOpacity>
                   <View style={styles.body}>
                     <View style={styles.bodyContent}>
                       <Text style={styles.name}>{this.state.group}</Text>
@@ -398,7 +492,7 @@ leave_F(){
                                 
                                 <Items_GroupNew
                                     ref={Task => (this.Task = Task)}
-                                    onPressTodo={this.delete_Complete}
+                                    onPressTodo={()=>{this.setState({ dialogVisible2: true })}}
                                     onPressTodo2={() => this.props.navigation.navigate('EditGroupTask', { name: 'EditGroupTask' })} />
 
                           </ScrollView>
@@ -441,6 +535,70 @@ leave_F(){
                 </ActionButton.Item>
 
               </ActionButton>
+              <View>
+                <Dialog.Container visible={this.state.dialogVisible2} >
+
+                  <Dialog.Title>done already?</Dialog.Title>
+                 
+                  
+                  <Dialog.Button label="Cancel" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Done"  color="#6F41E9" bold="10" onPress={this.delete_Complete} />
+                  
+                </Dialog.Container>
+              </View>
+
+              <View>
+                <Dialog.Container visible={this.state.dialogVisible3} >
+
+                  <Dialog.Title>{this.state.dialogtext}</Dialog.Title>
+                 
+                  
+                  <Dialog.Button label="No" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Yes"  color="#6F41E9" bold="10" onPress={async ()=>{
+                    if(this.state.tmp =='0')
+                    {
+                   let result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.All,
+                    allowsEditing: false,
+                    aspect: [4, 3],
+                    quality: 1
+                  });
+                  // await this.setState({dialogVisible3:false})
+                  console.log(result);
+                  if (!result.cancelled) {
+                    
+                    await this.setState({ groupUri: result.uri })
+                    // this.handleCancel()
+                   this.setState({dialogtext:'upload this image ?'})
+                   this.setState({tmp:'1'})
+
+                   console.log("123")
+                    
+                  
+                  
+                  }
+                }
+                else{
+                  console.log("upload")
+                  await database.uploadImageGroup(this.state.group, this.state.groupUri, this.upload_success, this.upload_fail, this.uploading_status);
+                }
+              
+              }} />
+                  
+                </Dialog.Container>
+              </View>
+
+              <View>
+                <Dialog.Container visible={this.state.dialogVisible4} >
+
+                  <Dialog.Title>upload this image ?</Dialog.Title>
+                 
+                  
+                  <Dialog.Button label="No" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Yes"  color="#6F41E9" bold="10" onPress={this.uploaduri} />
+                  
+                </Dialog.Container>
+              </View>
 
           </View>          
          

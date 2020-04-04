@@ -275,9 +275,7 @@ class Database{
         add_Fail();
         return;
       }
-      if(data.data().uri===""){
-        state=111;
-      }
+     
       })
       snapshot.forEach(async doc=>{
         console.log("Read")
@@ -322,18 +320,23 @@ class Database{
   //   },add_Fail);
   // }
   async readMyGroup(user,read_suc,read_fail){
+    let array=[]
     await firebase.firestore().collection("Account").doc(user).collection("Group").get().then(snapshot=>{
       if(snapshot.empty){
         console.log("ReadFail")
         read_fail();
         return;
       }
-      let array=[]
+      
       snapshot.forEach(async doc=>{
-        array.push(doc.data())
-        console.log(doc.id)
+        await firebase.firestore().collection("Group").doc(doc.id).get().then(data=>{
+          // console.log(data.data())
+          array.push(data.data())
+          console.log(array)
+          read_suc(array)
+        })
       })
-      read_suc(array)
+      
 
     })
     .catch(read_fail())
@@ -463,9 +466,9 @@ class Database{
         add_Fail();
         return;
       }
-      if(data.data().uri===""){
-        state=111;
-      }
+      // if(data.data().uri===""){
+      //   state=111;
+      // }
       })
       snapshot.forEach(async doc=>{
         console.log("Read")

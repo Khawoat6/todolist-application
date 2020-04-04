@@ -39,16 +39,18 @@ export default class Items_GroupNew extends React.Component {
 
   get_text_success = async (arr) => {
     this.setState({ items: arr })
-    console.log(this.state.items)
+    console.log(arr)
+    // console.log(this.state.items)
   }
 
   get_text_fail = async () => {
     // console.log(error);
   }
 
-  update() {
+  async update() {
     // console.log(this.state.email)
-    database.readMyGroup(this.state.email, this.get_text_success, this.get_text_fail);
+     await database.readMyGroup(this.state.email, (async arr=>{this.setState({ items: arr })
+     console.log(arr)}), this.get_text_fail);
     
   }
   // onPressGroupDetail() {
@@ -72,14 +74,14 @@ export default class Items_GroupNew extends React.Component {
     return (
       <View>
 
-          {items.map (({id, email,uri,admin}) => (
+          {items.map (({id, email,uri,AdminGroup}) => (
 
             <View style={{flexDirection:'row',backgroundColor:'#ffffff', alignItems:'center', borderBottomColor: '#F6F6F6',borderBottomWidth: 1,padding:10, margin:10, borderRadius: 15}} >
             {/* <Image style={{marginLeft:'10%', marginRight:'5%' ,width:60,height:60,}} source={{uri:uri}}/> */}
               <Avatar rounded size="large" containerStyle={{marginLeft:'3%', marginRight:'5%'}} source={{uri:uri}}/>
               <View style={{flex:5, flexDirection: 'column'}} >
                 <Text style={{fontSize:18,color:'#171D33',marginEnd:3,alignItems:'center',justifyContent:'center', }}>{id}</Text>
-                <Text style={{fontSize:12,marginTop:3,color:'#C4C4C4'}}>by {admin}</Text>
+                <Text style={{fontSize:12,marginTop:3,color:'#C4C4C4'}}>by {AdminGroup}</Text>
               </View>
               <TouchableOpacity style={{marginRight:'8%', flex:1}} onPress={() => { this.props.onPressTodo(id) }}>
                 <View  style={{flexDirection:'row-reverse',backgroundColor:'#ffffff',justifyContent: 'center',borderRadius:10, borderWidth:1,borderColor:'#F0ECFC', width:70, backgroundColor:'#F0ECFC'}}>

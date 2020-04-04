@@ -104,8 +104,14 @@ class Database{
         firebase.firestore().collection('Account').doc(id).delete();
         delete_Account_success();
     } catch (e) {
-        delete_Account_fail();
+        console.log(e)
     }
+  }
+
+  async deleteGrouptask(id,group,del_S,del_F){
+      console.log(id)
+      await firebase.firestore().collection("Group").doc(group).collection('Task').doc(id).delete().then(()=>{del_S()},del_F);
+     
   }
 
   async updateAccount(account,update_Account_success,update_Account_fail)
@@ -432,6 +438,30 @@ class Database{
   
 
  }
+ async readMessageCompleGroup(group,read_Message_success,read_Message_fail){
+  let array=[]
+  let query= await firebase.firestore().collection("Group").doc(group).collection("Task").where('status','==','0').orderBy('time');
+  query.get().then(snapshot=>{
+    if(snapshot.emtry)
+    {
+
+      read_Message_fail();
+      return;
+    }
+    snapshot.forEach(doc=>{
+      // console.log(doc.data())
+      // array.push(Object.values(doc.data()))
+      array.push(doc.data())
+      // read_Message_success(doc.data())
+      
+      })
+      read_Message_success(array)
+  })
+  .catch(read_Message_fail());
+
+
+
+}
  async readGroupDetail(group,read_suc,read_fail){
    await firebase.firestore().collection("Group").doc(group).get().then(async doc=>{
     console.log(doc.data())

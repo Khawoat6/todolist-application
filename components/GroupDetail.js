@@ -18,6 +18,8 @@ import CalendarStrip from 'react-native-calendar-strip';
 import Dialog from "react-native-dialog";
 import Items_Members from './Items_Members'
 import * as ImagePicker from 'expo-image-picker';
+import Items_comple from './Items_comple'
+
 
 
 export default class GroupDetail extends React.Component {
@@ -42,8 +44,12 @@ export default class GroupDetail extends React.Component {
     uploaduri:'',
     dialogVisible3: false, 
     dialogVisible4:false,
+    dialogVisible5:false,
     tmp:'0',
-    dialogtext:'wanna change your group image ?'
+    dialogtext:'wanna change your group image ?',
+    picker:true,
+    comple:false,
+    TextTmp:"All Tasks"
  
   };
   pickImage = async () => {
@@ -81,7 +87,7 @@ export default class GroupDetail extends React.Component {
     this.setState({ dialogVisible: false });
     this.setState({ dialogVisible2: false });
     this.setState({ dialogVisible3: false });
-    // this.setState({ dialogVisible4: true });
+     this.setState({ dialogVisible5: false });
     this.setState({ dialogVisible4: false });
 
   };
@@ -227,9 +233,15 @@ onFocusFunction=async()=>{
   this.setState({email:await AsyncStorage.getItem('@email')})
   this.setState({group:await AsyncStorage.getItem('@group')})
   this.setState({uri:await AsyncStorage.getItem('@uri')});
-  await database.CountTask(this.state.group,count=>{this.setState({ Alltask: count })},this.countFail)
-  await database.CountToComplete(this.state.group,count=>{this.setState({ ToCompletedTask: count })},this.countFail)
-  await database.CountComplete(this.state.group,count=>{this.setState({ CompletedTask: count })},this.countFail)
+  let count1='';
+  let count2='';
+  let count3='';
+  await database.CountTask(this.state.group,count=>{count1=count},this.countFail)
+  await database.CountToComplete(this.state.group,count=>{count2=count},this.countFail)
+  await database.CountComplete(this.state.group,count=>{count3=count},this.countFail)
+  this.setState({ Alltask: count1 })
+  this.setState({ ToCompletedTask: count2 })
+  this.setState({ CompletedTask: count3 })
   await database.readGroupDetail(this.state.group,data=>{
     this.setState({des:data.des})
     this.setState({groupUri:data.uri})
@@ -358,6 +370,18 @@ leave_F(){
   console.log("leaveFail")
 }
 
+async DeleteTask(){
+  let id = await AsyncStorage.getItem('@TaskID')
+  await database.deleteGrouptask(id,this.state.group,(()=>{ this.taslcomple.update();}),this.del_F)
+}
+
+del_S(){
+  this.taslcomple.update();
+}
+del_F(){
+
+}
+
 
   render() {
     return (
@@ -437,35 +461,53 @@ leave_F(){
               <Card style={{ flex:0.2, flexDirection: 'row',justifyContent:'center',alignItems:'center' }} >
                 
                 <View style={{ flexDirection: 'row',justifyContent: 'center' }}>
-
+                <TouchableOpacity  style={{ alignItems: 'center', justifyContent: 'center' ,alignContent:'center'}} onPress={() => {
+                  this.setState({TextTmp:'All Tasks'})
+                  this.setState({picker:true})
+              this.setState({comple:false})}}>
                     <View style={{flex:1,  flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}} >
                       <Text style={styles.Text2}>{this.state.Alltask}</Text>
                           <View style={{ alignItems: 'center' }}>
                             <Text style={styles.under}>All Tasks</Text>
                           </View>
                     </View>
+                    </TouchableOpacity>
 
                   <View style={{ alignItems: 'center', justifyContent: 'center' ,alignContent:'center'}} >
                     <Text style={styles.TTT} >|</Text>
                   </View>
                   
+                  <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' ,alignContent:'center'}} onPress={() => {
+                    this.setState({TextTmp:'All Tasks'})
+                    this.setState({picker:true})
+                this.setState({comple:false})}}>
                   <View style={{flex:1.3,  flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }} >
                       <Text style={styles.Text2} >{this.state.ToCompletedTask}</Text>
+                      
                       <View style={{ alignItems: 'center' }}>
                         <Text style={styles.under}>Tasks to be Completed</Text>
                       </View>
                   </View>
+                  </TouchableOpacity>
 
                   <View style={{ alignItems: 'center', justifyContent: 'center' ,alignContent:'center',}} >
                     <Text style={styles.TTT}>|</Text>
                   </View>
 
+                  <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' ,alignContent:'center'}} onPress={() => {
+                    
+                    this.setState({TextTmp:'Completed Tasks'})
+                    this.setState({picker:false}) 
+                  this.setState({comple:true})}}>
                   <View style={{ flex:1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }} >
                       <Text style={styles.Text2} >{this.state.CompletedTask}</Text>
                       <View style={{ alignItems: 'center' }}>
+                       
                         <Text style={styles.under}>Completed  Tasks</Text>
+                        
                       </View>
                   </View>
+                  </TouchableOpacity>
 
                 </View>
               </Card>
@@ -485,15 +527,12 @@ leave_F(){
               <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', marginTop: '2%', }}>
                   <View style={{flex:7,flexDirection:'column',justifyContent:'center' ,alignContent:'center',backgroundColor:'transparent',marginTop:"5%"}}>
 
-                      <Text style={{color:'#666666',fontSize:18,fontWeight:'bold', textAlight:'left', marginLeft:'7%'}}>All Tasks</Text>
+                      <Text style={{color:'#666666',fontSize:18,fontWeight:'bold', textAlight:'left', marginLeft:'7%'}}>{this.state.TextTmp}</Text>
 
                       <View style={{flex:7,flexDirection:'column',justifyContent:'center' ,alignContent:'center',backgroundColor:'transparent', marginBottom:'2%'}}>
                           <ScrollView style={{backgroundColor: "transparent", padding:20, flex: 1, marginTop: 10,}}>
-                                
-                                <Items_GroupNew
-                                    ref={Task => (this.Task = Task)}
-                                    onPressTodo={()=>{this.setState({ dialogVisible2: true })}}
-                                    onPressTodo2={() => this.props.navigation.navigate('EditGroupTask', { name: 'EditGroupTask' })} />
+                          {this.renderPicker()}
+                          {this.Completed()}     
 
                           </ScrollView>
                       </View>
@@ -600,6 +639,26 @@ leave_F(){
                 </Dialog.Container>
               </View>
 
+              <View>
+                <Dialog.Container visible={this.state.dialogVisible5} >
+
+                  <Dialog.Title>Delete this task ?</Dialog.Title>
+                 
+                  
+                  <Dialog.Button label="No" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Yes"  color="#6F41E9" bold="10" onPress={async()=>{
+                      let id = await AsyncStorage.getItem('@TaskID')
+                      await database.deleteGrouptask(id,this.state.group,(async ()=>{ this.taslcomple.update();
+                      
+                      await database.CountTask(this.state.group,count=>{this.setState({ Alltask: count })},this.countFail)  
+                      await database.CountComplete(this.state.group,count=>{this.setState({ CompletedTask: count })},this.countFail)
+                      this.setState({dialogVisible5:false})
+                    }),this.del_F)
+                  }} />
+                  
+                </Dialog.Container>
+              </View>
+
           </View>          
          
         </LinearGradient>
@@ -607,6 +666,31 @@ leave_F(){
       </Container>
 
     );
+  }
+  renderPicker() {
+    if (this.state.picker) {
+      return (
+        
+    
+        <Items_GroupNew
+        ref={Task => (this.Task = Task)}
+        onPressTodo={()=>{this.setState({ dialogVisible2: true })}}
+        onPressTodo2={() => this.props.navigation.navigate('EditGroupTask', { name: 'EditGroupTask' })} />
+      );
+    }
+    
+  }
+  Completed() {
+    if (this.state.comple) {
+      return (
+       
+        <Items_comple
+        ref={taslcomple => (this.taslcomple = taslcomple)}
+        onPressTodo={()=>{this.setState({ dialogVisible5: true })}}
+        onPressTodo2={() => this.props.navigation.navigate('EditGroupTask', { name: 'EditGroupTask' })} />
+      );
+    }
+    
   }
 }
 const styles = StyleSheet.create({

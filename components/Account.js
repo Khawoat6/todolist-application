@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { Container, Header, Title, Button, Icon, Content, InputGroup, Input } from 'native-base';
 import { StyleSheet, Text, View,TouchableOpacity,Image, Alert, TextInput, ScrollView ,AsyncStorage} from 'react-native';
 import Constants from "expo-constants";
+import Dialog from "react-native-dialog";
 
 export default class Account extends React.Component {
   state = {
     email: '',
     name:'',
     last:'',
-    uri: 'https://sv1.picz.in.th/images/2020/01/23/RuEI4z.png'
+    uri: 'https://sv1.picz.in.th/images/2020/01/23/RuEI4z.png',
+    dialogVisible: false,
   };
 onFocusFunction=async() =>{
    
@@ -63,6 +65,13 @@ componentDidMount(){
     this.props.navigation.navigate('Login')
 
   }
+  showDialog = () => {
+    this.setState({ dialogVisible: true });
+  };
+ 
+  handleCancel = () => {
+    this.setState({ dialogVisible: false });
+  };
 
   render() {
     return (
@@ -92,11 +101,11 @@ componentDidMount(){
           </TouchableOpacity>
 
 
-          <TouchableOpacity style={{flex:0.08,flexDirection:'row',backgroundColor:'#ffffff',alignItems:'center',borderBottomColor: '#F6F6F6',borderBottomWidth: 1,}} >
+          <TouchableOpacity style={{flex:0.08,flexDirection:'row',backgroundColor:'#ffffff',alignItems:'center',borderBottomColor: '#F6F6F6',borderBottomWidth: 1,}} onPress={this.showDialog} >
             
             <View style={{flex:1 ,flexDirection:'row'}}>
               <Text style={{flex:1, fontSize:20,marginLeft:30}}>Username</Text>
-            <Text style={{flex:1, fontSize:20,textAlign:'center', color:"#C4C4C4",}}>{this.state.name} {this.state.last}</Text>
+            <Text style={{flex:1, fontSize:20,textAlign:'center', color:"#C4C4C4",}}>{this.state.name} </Text>
             {/* <Image source={{ uri: "https://sv1.picz.in.th/images/2020/01/23/RuAgpJ.png" }} style={styles.photo4} /> */}
             </View>
           </TouchableOpacity>
@@ -135,6 +144,18 @@ componentDidMount(){
             <Text style={{fontSize:15,marginTop:15, color:"#666666",textAlign:'center'}}>Logged in as: {this.state.email}</Text>
 
         </View>
+        <View>
+                <Dialog.Container visible={this.state.dialogVisible} >
+
+                  <Dialog.Title>Change username ?</Dialog.Title>
+                  <Dialog.Description>please fill your new username</Dialog.Description>
+                  <Dialog.Input onChangeText={name => this.setState({name})} maxLength={35} color="#000000"/>
+                  
+                  <Dialog.Button label="Cancel" color="#6F41E9" bold="10" onPress={this.handleCancel} />
+                  <Dialog.Button label="Add"  color="#6F41E9" bold="10" onPress={this.handleAdd} />
+                  
+                </Dialog.Container>
+              </View>
 
         </Container>
 

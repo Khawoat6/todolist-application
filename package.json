@@ -23,7 +23,7 @@
     "firebase": "^7.7.0",
     "galio-framework": "^0.6.3",
     "js-base64": "^2.5.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "monalisa-ui": "^0.3.2",
     "native-base": "^2.13.8",
     "react": "~16.9.0",
